@@ -2,7 +2,7 @@
 // GSAP pin to fight the other scenes; one scrubbed timeline fades the intro out, walks through the chapters and lands
 // on the closing line. On wide screens the video follows the scroll (cinematic-web-builder, phase 8): a
 // requestAnimationFrame loop eases currentTime toward the target, never seeks while a seek is running, and keeps a
-// slow drift of its own so the network never freezes. The clip is a seamless loop, so time wraps around.
+// slow drift of its own so the light never freezes. The clip is a seamless loop, so time wraps around.
 // Phones get the plain autoplay loop; reduced motion gets the poster and the static layout.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

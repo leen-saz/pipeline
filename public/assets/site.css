@@ -190,10 +190,10 @@
 @media (max-width:640px){.st-fields{grid-template-columns:1fr}.st-form{padding:20px}}
 
 /* ---- Night theme (every page, <body class="st st-night">): navy and baby blue. --bg is the colour sampled from the edge
-   of the hero video (#051226), so sections and video read as one surface (cinematic-web-builder, phase 6).
+   of the hero video (#040C20), so sections and video read as one surface (cinematic-web-builder, phase 6).
    Tokens derived from --accent in app.css are computed on :root, so they are restated here. */
 .st-night{
-  --bg:#051226; --surface:#0A1D3B; --ink:#EAF4FC; --text:var(--ink); --deep:#0B1F3A;
+  --bg:#040C20; --surface:#0A1A3A; --royal:#1A4AD6; --ink:#EAF4FC; --text:var(--ink); --deep:#0B1F3A;
   --accent:#A9D8F5; --soft:#A9D8F5; --hl:#A9D8F5; --blue:#3E95D8; --pulse:#FF7D8F;
   --muted:color-mix(in srgb,#EAF4FC 64%,transparent);
   --line:color-mix(in srgb,#A9D8F5 16%,transparent);
@@ -202,17 +202,24 @@
   --focus:color-mix(in srgb,#A9D8F5 35%,transparent);
   --shadow:none; --shadow-lg:0 30px 70px rgba(0,0,0,.35);
   color-scheme:dark;background:var(--bg)}
+.st-night .st-sec{background:radial-gradient(60% 50% at 50% 100%,rgba(26,74,214,.16),transparent 70%)}
 .st-night .mark i,.st-night .st-h1 em{color:var(--accent)}
 .st-night .st-top{background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom-color:transparent}
 .st-night .st-eyebrow{background:var(--tint-2);box-shadow:none;color:var(--ink)}
-.st-night .btn.primary{background:var(--accent);color:#051226;box-shadow:0 8px 28px rgba(169,216,245,.18)}
+.st-night .btn.primary{background:var(--accent);color:#040C20;box-shadow:0 8px 28px rgba(169,216,245,.18)}
 .st-night .btn.primary:hover{background:#D4EDFC}
 .st-night .btn.secondary{background:var(--tint-2);color:var(--ink);border-color:transparent}
 .st-night .btn.secondary:hover,.st-night .btn.ghost:hover{background:color-mix(in srgb,#A9D8F5 20%,transparent)}
 .st-night .seg{background:var(--tint-2)}
-/* No strokes or glows on every card (an AI tell): flat navy tiles, one quiet surface */
-.st-night .st-tile,.st-night .st-agent,.st-night .st-panel,.st-night .st-card,.st-night .st-sev div,.st-night .pf-line li{background:var(--surface);box-shadow:none;border:0}
-.st-night .st-card{box-shadow:var(--shadow-lg)}
+/* Glass cards (Leen's references): a frosted surface over the navy, a faint top highlight and blue light rising from
+   the lower edge. One recipe for every card, no gradient borders. */
+.st-night{--glass:linear-gradient(180deg,rgba(130,170,255,.07),rgba(26,74,214,.10));
+  --glass-edge:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(150,212,252,.55),inset 0 -34px 46px -30px rgba(40,110,255,.55),0 24px 60px rgba(0,0,0,.35)}
+.st-night .st-tile,.st-night .st-agent,.st-night .st-panel,.st-night .st-card,.st-night .st-sev div,.st-night .pf-line li,.st-night .st-form,.st-night .st-term{
+  background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:var(--glass-edge);border:0;border-radius:28px}
+.st-night .pf-line li{border-radius:18px}
+.st-night .st-sev div{border-radius:20px}
 .st-night .st-stats div,.st-night .st-panel li{background:color-mix(in srgb,#000 22%,var(--surface))}
 .st-night .st-dark{background:transparent;color:var(--ink)}
 .st-night .st-dark .st-tile{background:var(--surface);border:0}
@@ -220,14 +227,13 @@
 .st-night .st-nums div,.st-night .st-dark .st-nums div{border-color:var(--line)}
 .st-night .st-agent .ix{color:transparent;-webkit-text-stroke:1px color-mix(in srgb,#A9D8F5 35%,transparent)}
 .st-night .st-marquee span{background:var(--ink)}
-.st-night .st-term{background:#030C1B;color:#E3F2FD;box-shadow:var(--shadow-lg)}
+.st-night .st-term{background:linear-gradient(180deg,rgba(2,8,22,.85),rgba(10,30,80,.55));color:#E3F2FD}
 .st-night .st-term .c{color:#7FA6C6}
 .st-night .st-term .hi{color:#A9D8F5}
-.st-night .st-sev .s1{box-shadow:inset 0 3px 0 var(--pulse)}
-.st-night .st-sev .s2{box-shadow:inset 0 3px 0 var(--accent)}
-.st-night .st-sev .s3{box-shadow:inset 0 3px 0 var(--blue)}
-.st-night .st-sev .s4{box-shadow:inset 0 3px 0 var(--line)}
-.st-night .st-form{background:var(--surface);box-shadow:none}
+.st-night .st-sev .s1{box-shadow:inset 0 3px 0 var(--pulse),var(--glass-edge)}
+.st-night .st-sev .s2{box-shadow:inset 0 3px 0 var(--accent),var(--glass-edge)}
+.st-night .st-sev .s3{box-shadow:inset 0 3px 0 var(--blue),var(--glass-edge)}
+.st-night .st-sev .s4{box-shadow:inset 0 3px 0 var(--line),var(--glass-edge)}
 .st-night .st-form input,.st-night .st-form select,.st-night .st-form textarea{background:color-mix(in srgb,#000 25%,var(--surface));border-color:var(--line);color:var(--ink)}
 .st-night .st-form input[type=tel]{width:100%;height:46px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);font:400 15px/1 var(--f-ar)}
 .st-night input[type=checkbox]{accent-color:var(--accent)}

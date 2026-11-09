@@ -11,9 +11,9 @@ const { chapters, finale, label } = Astro.props;
 <section class="cine" data-cine style={`--n:${chapters.length}`} aria-label={label}>
   <div class="cine-stage">
     <div class="cine-media" aria-hidden="true">
-      <video data-cine-video muted playsinline loop autoplay preload="auto" poster="/assets/video/net-poster.jpg" disablepictureinpicture>
-        <source media="(max-width: 899px)" src="/assets/video/net-540.mp4" type="video/mp4">
-        <source src="/assets/video/net-1080.mp4" type="video/mp4">
+      <video data-cine-video muted playsinline loop autoplay preload="auto" poster="/assets/video/light-poster.jpg" disablepictureinpicture>
+        <source media="(max-width: 899px)" src="/assets/video/light-540.mp4" type="video/mp4">
+        <source src="/assets/video/light-720.mp4" type="video/mp4">
       </video>
     </div>
     <div class="cine-intro st-wrap" data-cine-intro><slot /></div>
