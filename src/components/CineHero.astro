@@ -1,0 +1,31 @@
+---
+// The cinematic opening of every page (.claude/skills/cinematic-web-builder): a real video behind the hero, held in
+// place while the intro fades out and two or three "chapters" take its place on alternating sides, then one closing line.
+// The video (public/assets/video, rendered by scripts/render-hero.py) is muted, never covered by an overlay, and only
+// fades into the page colour at its lower edge. Motion: src/lib/cine.ts. Without JS or with reduced motion, the intro
+// and the chapters simply sit one after another over the still poster.
+interface Chapter { kick: string; title?: string; text: string }
+interface Props { chapters: Chapter[]; finale?: string; label: string }
+const { chapters, finale, label } = Astro.props;
+---
+<section class="cine" data-cine style={`--n:${chapters.length}`} aria-label={label}>
+  <div class="cine-stage">
+    <div class="cine-media" aria-hidden="true">
+      <video data-cine-video muted playsinline loop autoplay preload="auto" poster="/assets/video/net-poster.jpg" disablepictureinpicture>
+        <source media="(max-width: 899px)" src="/assets/video/net-540.mp4" type="video/mp4">
+        <source src="/assets/video/net-1080.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="cine-intro st-wrap" data-cine-intro><slot /></div>
+    <div class="cine-chapters st-wrap">
+      {chapters.map((c, i) => (
+        <article class="cine-ch" data-cine-ch data-side={i % 2 ? 'end' : 'start'}>
+          <span class="kick">{c.kick}</span>
+          {c.title && <h2>{c.title}</h2>}
+          <p>{c.text}</p>
+        </article>
+      ))}
+      {finale && <p class="cine-finale" data-cine-finale>{finale}</p>}
+    </div>
+  </div>
+</section>

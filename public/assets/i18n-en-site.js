@@ -162,6 +162,12 @@ export const SITE_EN = {
   'ما قدرنا نحفظ الطلب الحين، تواصل معنا واتساب': 'We couldn\'t save the request right now; reach us on WhatsApp',
   'ما وصل الطلب. تأكد من الاتصال وجرّب مرة ثانية': 'The request didn\'t go through. Check your connection and try again',
 
+  // Cinematic hero and footer lines
+  'القرار يوصلك جاهز': 'The decision arrives ready',
+  'كل اقتراح معه أرقامه، والمراجع فحصه على قواعدك قبل ما يوصلك. توافق، تعدّل، أو ترفض.': 'Every suggestion comes with its numbers, checked against your rules before it reaches you. Approve, edit, or reject.',
+  'الأرقام تتكلم. والقرار لك.': 'The numbers talk. The call is yours.',
+  'نلقى الثغرة قبل لا يلقاها غيرك.': 'We find the hole before someone else does.',
+  'نحوّل الأرقام لقرارات، ونحمي اللي تبنيه.': 'We turn numbers into decisions, and protect what you build.',
   '· واتساب': '· WhatsApp',
 
   // The inbox (src/pages/inbox/index.astro, src/lib/inbox.ts)

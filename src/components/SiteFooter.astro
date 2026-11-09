@@ -1,16 +1,27 @@
 ---
+// Footer for every page. The hero video plays again behind it (cinematic-web-builder, phase 7): muted, no overlay,
+// only a fade at the top edge into the page colour; it waits off screen (preload="none") until the page reaches it.
 import { NAV, CONTACT, wa } from '../lib/public-site';
+interface Props { line?: string }
+const { line } = Astro.props;
 ---
-<footer class="st-foot">
-  <div class="st-wrap">
-    <div>
-      <span class="mark">Apipeline<i>.</i></span>
-      <p>شركة سعودية تبني لوحة قرارات تسويقية، وتفحص أمن الأكواد والمواقع والتطبيقات.</p>
+<div class="st-foot-band">
+  <video muted playsinline loop autoplay preload="none" poster="/assets/video/net-poster.jpg" aria-hidden="true" data-foot-video disablepictureinpicture>
+    <source media="(max-width: 899px)" src="/assets/video/net-540.mp4" type="video/mp4">
+    <source src="/assets/video/net-1080.mp4" type="video/mp4">
+  </video>
+  {line && <p class="st-foot-line">{line}</p>}
+  <footer class="st-foot">
+    <div class="st-wrap">
+      <div>
+        <span class="mark">Apipeline<i>.</i></span>
+        <p>شركة سعودية تبني لوحة قرارات تسويقية، وتفحص أمن الأكواد والمواقع والتطبيقات.</p>
+      </div>
+      <nav aria-label="روابط">
+        {NAV.map(n => <a href={n.href}>{n.label}</a>)}
+      </nav>
+      {CONTACT.whatsapp && <a class="st-wa" href={wa('السلام عليكم، أبي أعرف أكثر عن Apipeline')} rel="noopener" target="_blank"><span dir="ltr">{CONTACT.phoneLabel}</span> · واتساب</a>}
+      <small>© ٢٠٢٦ Apipeline</small>
     </div>
-    <nav aria-label="روابط">
-      {NAV.map(n => <a href={n.href}>{n.label}</a>)}
-    </nav>
-    {CONTACT.whatsapp && <a class="st-wa" href={wa('السلام عليكم، أبي أعرف أكثر عن Apipeline')} rel="noopener" target="_blank"><span dir="ltr">{CONTACT.phoneLabel}</span> · واتساب</a>}
-    <small>© ٢٠٢٦ Apipeline</small>
-  </div>
-</footer>
+  </footer>
+</div>

@@ -6,6 +6,7 @@ export const prerender = true;
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import RequestForm from '../../components/RequestForm.astro';
+import CineHero from '../../components/CineHero.astro';
 
 
 const VALUES = [
@@ -42,7 +43,7 @@ const FIT = [
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="index,follow">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#F6F0E3">
+<meta name="theme-color" content="#051226">
 <title>Apipeline · بروفايل الشركة</title>
 <meta name="description" content="بروفايل Apipeline: من نحن، وش نقدّم، وكيف نشتغل.">
 <link rel="preload" href="/assets/fonts/thmanyahserifdisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
@@ -50,13 +51,11 @@ const FIT = [
 <link rel="stylesheet" href="/assets/app.css">
 <link rel="stylesheet" href="/assets/site.css">
 <style is:global>
-.pf-cover{min-height:calc(100svh - 68px);display:flex;flex-direction:column;justify-content:center;padding-block:64px}
+.pf-cover{display:flex;flex-direction:column;align-items:center;text-align:center}
 .pf-cover .mark{font-size:clamp(64px,13vw,168px);line-height:1;display:block;margin:0 0 28px}
 .pf-cover .yr{font:500 15px/1 var(--f-ar);color:var(--muted);letter-spacing:.02em;margin:0 0 18px}
-.pf-cover h1{font:700 clamp(26px,3.4vw,44px)/1.35 var(--f-display);max-width:20em;margin:0 0 32px;text-wrap:balance}
-.pf-vm{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.pf-vm h3{font:700 15px/1 var(--f-ar);color:var(--accent);margin:0 0 12px}
-.pf-vm p{font:700 clamp(20px,2.2vw,26px)/1.5 var(--f-display);margin:0}
+.pf-cover h1{font:700 clamp(24px,3.2vw,40px)/1.4 var(--f-display);max-width:22em;margin:0 0 32px;text-wrap:balance}
+.pf-cover .st-cta{justify-content:center}
 .pf-line{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:start;padding:44px 0;border-top:1px solid var(--line)}
 .pf-line h3{font:900 clamp(30px,3.6vw,46px)/1.15 var(--f-display);margin:10px 0 14px}
 .pf-line p{font:400 17px/1.85 var(--f-text);color:var(--muted);margin:0 0 18px}
@@ -71,17 +70,17 @@ const FIT = [
 .pf-how p{font:400 15px/1.8 var(--f-text);color:var(--muted);margin:0}
 .pf-fit{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .pf-fit li{padding:18px 20px;border-radius:var(--r-sm);border:1px solid var(--line);font:400 16px/1.7 var(--f-ar)}
-@media (max-width:960px){.pf-vm,.pf-line,.pf-fit{grid-template-columns:1fr}.pf-how{grid-template-columns:1fr 1fr}}
-@media (max-width:640px){.pf-how{grid-template-columns:1fr}}
+@media (max-width:960px){@media (max-width:640px){.pf-how{grid-template-columns:1fr}}
 @media print{.pf-cover{min-height:auto;padding:40mm 0 0}.pf-line li{box-shadow:none;border:1px solid #DDD6F6}}
 </style>
 </head>
-<body class="st">
+<body class="st st-night">
 
 <SiteHeader current="/profile/" cta={{ href: '#request', label: 'تواصل معنا' }} />
 
 <main>
-  <section class="st-wrap pf-cover st-page">
+  <CineHero label="Apipeline · بروفايل الشركة" chapters={[{ kick: 'رؤيتنا', text: 'كل قرار تسويقي في المنطقة مبني على رقم واضح، وكل منتج رقمي مفحوص قبل ما يوصل للناس.' }, { kick: 'رسالتنا', text: 'نجمع الأرقام، نقترح القرار، ونترك الاعتماد لصاحبه. ونلقى الثغرة قبل لا يلقاها غيرك.' }]}>
+    <div class="pf-cover">
     <p class="yr">بروفايل الشركة · ٢٠٢٦</p>
     <span class="mark">Apipeline<i>.</i></span>
     <h1>نحوّل أرقام التسويق لقرارات واضحة، ونفحص أمن المنتجات الرقمية قبل ما تنطلق.</h1>
@@ -89,7 +88,8 @@ const FIT = [
       <button class="btn primary" type="button" data-print>حمّل البروفايل PDF</button>
       <a class="btn secondary" href="#lines">وش نقدّم</a>
     </div>
-  </section>
+    </div>
+  </CineHero>
 
   <section class="st-words-sec">
     <div class="st-wrap">
@@ -99,11 +99,7 @@ const FIT = [
 
   <section class="st-sec st-page" style="padding-top:0">
     <div class="st-wrap">
-      <div class="pf-vm">
-        <article class="st-tile" data-reveal><h3>رؤيتنا</h3><p>كل قرار تسويقي في المنطقة مبني على رقم واضح، وكل منتج رقمي مفحوص قبل ما يوصل للناس.</p></article>
-        <article class="st-tile" data-reveal><h3>رسالتنا</h3><p>نجمع الأرقام، نقترح القرار، ونترك الاعتماد لصاحبه. ونلقى الثغرة قبل لا يلقاها غيرك.</p></article>
-      </div>
-      <header class="st-head" style="margin-top:96px" data-reveal>
+      <header class="st-head" data-reveal>
         <span class="kick">قيمنا</span>
         <h2>أربع قواعد نشتغل عليها</h2>
       </header>
@@ -175,11 +171,12 @@ const FIT = [
   <div class="st-noprint"><RequestForm kind="board" title="خلنا نبدأ من أرقامك" lead="اختر وش تحتاج: تجربة اللوحة، أو خريطة التسرب لإعلاناتك، أو فحص أمني لمنتجك. ونرد عليك خلال يوم عمل." /></div>
 </main>
 
-<SiteFooter />
+<SiteFooter line="نحوّل الأرقام لقرارات، ونحمي اللي تبنيه." />
 
 <script is:inline type="module" src="/assets/welcome.js"></script>
 <script>
   import '../../lib/scroll-story';
+  import '../../lib/cine';
   import '../../lib/request-form';
   // Print the profile: everything shown first (the reveals may not have run yet below the fold)
   document.querySelector('[data-print]')?.addEventListener('click', () => {

@@ -6,6 +6,7 @@ export const prerender = true;
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import RequestForm from '../components/RequestForm.astro';
+import CineHero from '../components/CineHero.astro';
 
 const ar = (n: number) => n.toLocaleString('ar-SA');
 const LOGOS = ['meta', 'googleads', 'snapchat', 'tiktok', 'googleanalytics', 'x', 'pinterest', 'reddit', 'googlesearchconsole', 'posthog'];
@@ -51,7 +52,7 @@ const FAQ = [
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="index,follow">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#F6F0E3">
+<meta name="theme-color" content="#051226">
 <title>Apipeline · لوحة التسويق</title>
 <meta name="description" content="أرقام كل منصات إعلاناتك في لوحة وحدة، وإيجنتس تقترح وتنفّذ بعد موافقتك.">
 <link rel="preload" href="/assets/fonts/thmanyahserifdisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
@@ -59,13 +60,12 @@ const FAQ = [
 <link rel="stylesheet" href="/assets/app.css">
 <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body class="st">
+<body class="st st-night">
 
 <SiteHeader current="/" cta={{ href: '#request', label: 'تواصل معنا' }} />
 
 <main>
-  <section class="st-wrap st-hero">
-    <div>
+  <CineHero label="Apipeline" chapters={[0, 1, 3].map(i => { const [kick, title, text] = STEPS[i]!; return { kick: kick!, title: title!, text: text! }; })} finale="دورة وحدة تمشي كل ساعة">
       <p class="st-eyebrow">لوحة تسويق بإيجنتس، والقرار الأخير لك</p>
       <h1 class="st-h1">الأرقام تتكلم. <em>والقرار لك.</em></h1>
       <p class="st-lead">Apipeline يجمع أرقام منصاتك كل ساعة، ويقترح وش توقف ووش ترفع، ويفحص المراجع كل اقتراح على قواعدك قبل ما يوصلك. توافق، ويتنفّذ بأمان.</p>
@@ -74,8 +74,15 @@ const FAQ = [
         <a class="btn secondary" href="#how">كيف يشتغل</a>
       </div>
       <p class="st-note">الأرقام في الأمثلة بيانات تجريبية.</p>
-    </div>
+  </CineHero>
 
+  <section class="st-sec st-demo">
+    <div class="st-wrap st-demo-in">
+      <header class="st-head" data-reveal>
+        <span class="kick">مثال من لوحة القرارات</span>
+        <h2>القرار يوصلك جاهز</h2>
+        <p>كل اقتراح معه أرقامه، والمراجع فحصه على قواعدك قبل ما يوصلك. توافق، تعدّل، أو ترفض.</p>
+      </header>
     <div class="st-stack" role="img" aria-label="مثال من لوحة القرارات">
       <article class="st-card" style="inset-inline-start:0;top:24px;width:min(100%,430px);z-index:3" data-depth="0.08">
         <span class="k">اقتراح · Meta</span>
@@ -95,6 +102,7 @@ const FAQ = [
       <article class="st-card" style="inset-inline-start:6%;top:410px;z-index:4;padding:12px 14px" data-depth="0.4">
         <span class="st-chip hot">زر الطوارئ</span>
       </article>
+    </div>
     </div>
   </section>
 
@@ -219,9 +227,9 @@ const FAQ = [
   <RequestForm kind="board" title="اربط حساباتك وخل الأرقام تتكلم" lead="اكتب لنا وش عندك من منصات وإنفاق، ونجهّز لك تجربة على أرقامك. كل ربط بتسجيل دخول المنصة نفسها، بدون ملفات تصدير وبدون لصق مفاتيح." />
 </main>
 
-<SiteFooter />
+<SiteFooter line="الأرقام تتكلم. والقرار لك." />
 
 <script is:inline type="module" src="/assets/welcome.js"></script>
-<script>import '../lib/scroll-story'; import '../lib/request-form';</script>
+<script>import '../lib/scroll-story'; import '../lib/cine'; import '../lib/request-form';</script>
 </body>
 </html>

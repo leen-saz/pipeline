@@ -6,6 +6,7 @@ export const prerender = true;
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import RequestForm from '../../components/RequestForm.astro';
+import CineHero from '../../components/CineHero.astro';
 
 const ar = (n: number) => n.toLocaleString('ar-SA');
 
@@ -55,7 +56,7 @@ const FAQ = [
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="index,follow">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#0B1F3A">
+<meta name="theme-color" content="#051226">
 <title>Apipeline · الأمن السيبراني</title>
 <meta name="description" content="فحص أمني للأكواد والمواقع والـ API وتطبيقات الجوال، مع تقرير مرتب حسب الخطورة وإعادة فحص بعد الإصلاح.">
 <link rel="preload" href="/assets/fonts/thmanyahserifdisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
@@ -63,13 +64,12 @@ const FAQ = [
 <link rel="stylesheet" href="/assets/app.css">
 <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body class="st st-cyber">
+<body class="st st-night">
 
 <SiteHeader current="/security/" cta={{ href: '#request', label: 'اطلب فحص' }} />
 
 <main>
-  <section class="st-wrap st-hero">
-    <div>
+  <CineHero label="Apipeline · الأمن السيبراني" chapters={[1, 2, 4].map(i => { const [kick, title, text] = STEPS[i]!; return { kick: kick!, title: title!, text: text! }; })} finale="بإذن مكتوب بس">
       <p class="st-eyebrow">فحص أمني للأكواد والمواقع والتطبيقات</p>
       <h1 class="st-h1">نلقى الثغرة <em>قبل لا يلقاها غيرك.</em></h1>
       <p class="st-lead">نفحص الكود والموقع والتطبيق مثل ما يفحصه المهاجم، ونسلّمك كل ثغرة بدليلها ودرجة خطورتها وطريقة إصلاحها. وبعد ما تصلح، نعيد الفحص.</p>
@@ -78,7 +78,15 @@ const FAQ = [
         <a class="btn secondary" href="#scope">وش نفحص</a>
       </div>
       <p class="st-note">ما نبدأ أي فحص بدون إذن مكتوب منك.</p>
-    </div>
+  </CineHero>
+
+  <section class="st-sec st-demo">
+    <div class="st-wrap st-demo-in">
+      <header class="st-head" data-reveal>
+        <span class="kick">{STEPS[3]![0]}</span>
+        <h2>{STEPS[3]![1]}</h2>
+        <p>{STEPS[3]![2]}</p>
+      </header>
     <div>
       <div class="st-term" role="img" aria-label="مثال توضيحي لنتائج فحص" data-depth="0.06">
         <div class="dots"><i></i><i></i><i></i></div>
@@ -95,6 +103,7 @@ const FAQ = [
         </div>
       </div>
       <p class="st-note" style="text-align:center">مثال توضيحي، مو نتائج عميل.</p>
+    </div>
     </div>
   </section>
 
@@ -185,9 +194,9 @@ const FAQ = [
   <RequestForm kind="security" title="قبل ما تطلق التحديث الجاي، خلنا نفحصه" lead="قول لنا وش عندك: موقع، API، تطبيق، أو كود. نرد عليك بالنطاق المقترح والمدة، وما نبدأ شي قبل إذنك المكتوب." />
 </main>
 
-<SiteFooter />
+<SiteFooter line="نلقى الثغرة قبل لا يلقاها غيرك." />
 
 <script is:inline type="module" src="/assets/welcome.js"></script>
-<script>import '../../lib/scroll-story'; import '../../lib/request-form';</script>
+<script>import '../../lib/scroll-story'; import '../../lib/cine'; import '../../lib/request-form';</script>
 </body>
 </html>
