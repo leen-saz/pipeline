@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pipeline",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // Secrets (wrangler secret put …, never in this file):
+  //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY  where requests are stored (supabase/migrations/001_site_requests.sql)
+  //   INBOX_PASSWORD                           opens /inbox/ (user name: anything)
+  //   REQUESTS_WEBHOOK                         optional: Slack/Teams/automation URL told about each new request
+  "vars": { "APP_ENV": "local" },
+  "env": {
+    "production": { "name": "pipeline", "workers_dev": true, "vars": { "APP_ENV": "production" } }
+  }
+}

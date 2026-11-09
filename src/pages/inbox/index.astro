@@ -1,0 +1,53 @@
+---
+// /inbox/: the requests sent from the site's form. Behind INBOX_PASSWORD (src/middleware.ts), never indexed.
+export const prerender = false;
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Apipeline · طلبات الموقع</title>
+<link rel="stylesheet" href="/assets/app.css">
+<link rel="stylesheet" href="/assets/site.css">
+<style is:global>
+.ib{max-width:920px;margin:0 auto;padding:32px 16px 64px}
+.ib-head{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
+.ib-head h1{margin:0;font-size:28px}
+.ib-head p{margin:6px 0 0}
+.ib-head select{width:auto}
+.rq-list{display:grid;gap:10px}
+.rq{background:var(--card,#fff);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.rq-head{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap}
+.rq-head b{font-size:16px}
+.rq-head time{margin-inline-start:auto}
+.rq-meta{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:14px}
+.rq-meta a{color:var(--accent)}
+.rq-msg{margin:0;font-size:14px;line-height:1.7;white-space:pre-wrap}
+.rq-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rq-acts select{width:auto;height:36px}
+.rq[data-status="closed"]{opacity:.6}
+</style>
+</head>
+<body class="st">
+<main class="ib">
+  <header class="ib-head">
+    <div>
+      <a class="mark" href="/">Apipeline<i>.</i></a>
+      <h1>طلبات الموقع</h1>
+      <p class="muted">اللي وصل من نموذج الطلب. البيانات تُستخدم للرد بس، وتقدر تحذف أي طلب لو صاحبه طلب.</p>
+    </div>
+    <span id="lang"></span>
+    <select id="rq-filter" aria-label="الحالة">
+      <option value="">الكل</option><option value="new">جديد</option><option value="contacted">تواصلنا</option><option value="closed">مقفل</option>
+    </select>
+  </header>
+  <div id="rq-list" class="rq-list" aria-live="polite"></div>
+  <p class="msg" id="msg" role="status"></p>
+</main>
+<script is:inline type="module" src="/assets/welcome.js"></script>
+<script>import '../../lib/inbox';</script>
+</body>
+</html>

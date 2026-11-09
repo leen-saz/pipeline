@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local runs (wrangler dev). Never commit .dev.vars.
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=
+INBOX_PASSWORD=
+# REQUESTS_WEBHOOK=https://hooks.slack.com/services/...
