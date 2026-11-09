@@ -19,7 +19,7 @@
 
 ## نموذج الطلب
 
-- **الحفظ:** `POST /api/request` يحفظ الطلب في جدول `site_requests` على Supabase (`supabase/migrations/001_site_requests.sql`).
+- **الحفظ:** `POST /api/request` يحفظ الطلب في جدول `site_requests` داخل قاعدة D1 على كلاود فلير اسمها `apipeline-site` (`migrations/0001_site_requests.sql`). القاعدة ما لها رابط عام، والـ Worker بس يوصل لها.
 - **الحماية:**
   - يقبل بس من نفس الموقع.
   - فيه حقل مخفي للبوتات، وحد أدنى لوقت التعبئة.
@@ -33,6 +33,7 @@
 ```bash
 npm install
 cp .dev.vars.example .dev.vars   # عبّي القيم
+npx wrangler d1 migrations apply apipeline-site --local
 npm run dev                      # يبني ثم يشغّل wrangler dev
 ```
 
@@ -40,12 +41,14 @@ npm run dev                      # يبني ثم يشغّل wrangler dev
 
 ## النشر (مرة وحدة)
 
-1. **Supabase:** أنشئ مشروع منفصل، وشغّل `supabase/migrations/001_site_requests.sql` في SQL Editor.
+1. **قاعدة الطلبات:** موجودة على كلاود فلير. أي تعديل على الجدول يكون بملف جديد في `migrations/`، وبعدها:
+   ```bash
+   npx wrangler d1 migrations apply apipeline-site --remote
+   ```
 2. **أسرار الـ Worker:**
    ```bash
-   npx wrangler secret put SUPABASE_URL --env production
-   npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env production
    npx wrangler secret put INBOX_PASSWORD --env production
+   npx wrangler secret put IP_SALT --env production
    # اختياري: إشعار بكل طلب جديد (Slack/Teams/أي رابط https)
    npx wrangler secret put REQUESTS_WEBHOOK --env production
    ```

@@ -1,5 +1,5 @@
 # Copy to .dev.vars for local runs (wrangler dev). Never commit .dev.vars.
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=
+# Local runs use a local copy of the D1 database: npx wrangler d1 migrations apply apipeline-site --local
 INBOX_PASSWORD=
+IP_SALT=
 # REQUESTS_WEBHOOK=https://hooks.slack.com/services/...

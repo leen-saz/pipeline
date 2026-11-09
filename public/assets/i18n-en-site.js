@@ -174,8 +174,9 @@ export const SITE_EN = {
   'طلبات الموقع': 'Website requests', 'الكل': 'All', 'جديد': 'New', 'تواصلنا': 'Contacted', 'مقفل': 'Closed',
   'اللي وصل من نموذج الطلب. البيانات تُستخدم للرد بس، وتقدر تحذف أي طلب لو صاحبه طلب.': 'What arrived from the request form. The details are only for replying, and you can delete any request if its sender asks.',
   'تجربة اللوحة': 'Board trial', 'خريطة التسرب': 'Leak Map', 'استفسار': 'Enquiry', 'السحابة والإعدادات': 'Cloud and settings', 'الحالة': 'Status', 'حذف': 'Delete',
-  'يحمّل…': 'Loading…', 'ما وصل طلب للحين.': 'No requests yet.', 'انحفظ.': 'Saved.', 'انحذف.': 'Deleted.', 'طلب غير صالح': 'Invalid request', 'طلب مرفوض': 'Request refused', 'Supabase غير مربوط': 'Supabase is not connected',
-  'جدول الطلبات ما انضاف بعد: شغّل supabase/migrations/001_site_requests.sql في Supabase.': 'The requests table is not there yet: run supabase/migrations/001_site_requests.sql in Supabase.',
+  'يحمّل…': 'Loading…', 'ما وصل طلب للحين.': 'No requests yet.', 'انحفظ.': 'Saved.', 'انحذف.': 'Deleted.', 'طلب غير صالح': 'Invalid request', 'طلب مرفوض': 'Request refused', 
+  'جدول الطلبات ما انضاف بعد: شغّل npx wrangler d1 migrations apply apipeline-site --remote': 'The requests table is not there yet: run npx wrangler d1 migrations apply apipeline-site --remote',
+  'قاعدة الطلبات غير مربوطة': 'The requests database is not connected', 'ما لقينا الطلب': 'Request not found',
   'Apipeline · طلبات الموقع': 'Apipeline · Website requests',
   'ما قدرنا نقرا الطلبات': 'Couldn\'t read the requests', 'ما انحفظ التعديل': 'The change wasn\'t saved', 'ما انحذف الطلب': 'The request wasn\'t deleted',
 };

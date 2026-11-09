@@ -1,11 +1,9 @@
 // Small helpers shared by the API endpoints and the middleware.
 export interface SiteEnv {
-  SUPABASE_URL?: string;
-  SUPABASE_SERVICE_ROLE_KEY?: string;
+  DB?: D1Database;                // requests (migrations/0001_site_requests.sql)
   INBOX_PASSWORD?: string;
   REQUESTS_WEBHOOK?: string;
-  // Optional key for the visitor hash; the service key is used when it is not set
-  IP_SALT?: string;
+  IP_SALT?: string;               // key for the daily visitor hash
 }
 
 export const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>

@@ -7,11 +7,12 @@
 // LIMIT_PER_HOUR requests per visitor per hour (counted by a daily keyed hash, never the address itself).
 // If REQUESTS_WEBHOOK is set, the owner gets a short note with no phone or email in it, only what was asked.
 import { json, readJson, sameOrigin, type SiteEnv } from './http';
-import { db, rest, missingTable, type Db } from './store';
+import { recentCount, insertRequest, listRows, setStatus, deleteRow, missingTable } from './store';
 import { cleanRequest, ipKey, LIMIT_PER_HOUR, KIND_AR, type SiteRequest } from './site-request';
 
 const STATUSES = ['new', 'contacted', 'closed'];
-const NOT_APPLIED = 'جدول الطلبات ما انضاف بعد: شغّل supabase/migrations/001_site_requests.sql في Supabase.';
+const NOT_APPLIED = 'جدول الطلبات ما انضاف بعد: شغّل npx wrangler d1 migrations apply apipeline-site --remote';
+const OFF = 'قاعدة الطلبات غير مربوطة';
 
 async function notify(hook: string | undefined, r: SiteRequest, origin: string) {
   if (!hook || !/^https:\/\//.test(hook)) return;
@@ -20,26 +21,21 @@ async function notify(hook: string | undefined, r: SiteRequest, origin: string) 
     .catch(() => { console.warn('site_request_notify_failed'); });
 }
 
-async function tooMany(d: Db, key: string): Promise<boolean> {
-  const since = new Date(Date.now() - 3600_000).toISOString();
-  const r = await rest<unknown[]>(d, `site_requests?ip_key=eq.${key}&at=gte.${encodeURIComponent(since)}&select=id&limit=${LIMIT_PER_HOUR}`);
-  return r.ok && Array.isArray(r.data) && r.data.length >= LIMIT_PER_HOUR;
-}
-
 export async function submitRequest(req: Request, e: SiteEnv): Promise<Response> {
-  const d = db(e);
-  if (!d) return json(503, { error: 'الإرسال متوقف مؤقتًا، تواصل معنا واتساب' });
+  const db = e.DB;
+  if (!db || !e.IP_SALT) return json(503, { error: 'الإرسال متوقف مؤقتًا، تواصل معنا واتساب' });
   if (!sameOrigin(req)) return json(403, { error: 'طلب مرفوض' });
   let body: Record<string, unknown>;
   try { body = await readJson(req, 6000); } catch { return json(400, { error: 'الطلب غير صالح' }); }
   const c = cleanRequest(body);
   if (!c.ok && 'bot' in c) return json(200, { ok: true });
   if (!c.ok) return json(400, { error: 'راجع الحقول المظللة', fields: c.errors });
-  const key = await ipKey(req.headers.get('cf-connecting-ip') || 'unknown', e.IP_SALT || d.key);
-  if (await tooMany(d, key)) return json(429, { error: 'وصلنا طلبك قبل شوي. بنتواصل معك قريب' });
-  const w = await rest(d, 'site_requests', { method: 'POST', prefer: 'return=minimal', body: { ...c.data, consent_at: new Date().toISOString(), ip_key: key } });
-  if (!w.ok) {
-    console.error('site_request_store_failed', JSON.stringify({ status: w.status, missing: missingTable(w) }));
+  const key = await ipKey(req.headers.get('cf-connecting-ip') || 'unknown', e.IP_SALT);
+  try {
+    if (await recentCount(db, key, new Date(Date.now() - 3600_000).toISOString()) >= LIMIT_PER_HOUR) return json(429, { error: 'وصلنا طلبك قبل شوي. بنتواصل معك قريب' });
+    await insertRequest(db, c.data, new Date().toISOString(), key);
+  } catch (err) {
+    console.error('site_request_store_failed', JSON.stringify({ missing: missingTable(err) }));
     return json(503, { error: 'ما قدرنا نحفظ الطلب الحين، تواصل معنا واتساب' });
   }
   // What was asked, never who asked: the log is not a place for phone numbers
@@ -49,36 +45,30 @@ export async function submitRequest(req: Request, e: SiteEnv): Promise<Response>
 }
 
 export async function listRequests(req: Request, e: SiteEnv): Promise<Response> {
-  const d = db(e);
-  if (!d) return json(503, { error: 'Supabase غير مربوط' });
+  if (!e.DB) return json(503, { error: OFF });
   const status = new URL(req.url).searchParams.get('status');
-  const filter = status && STATUSES.includes(status) ? `&status=eq.${status}` : '';
-  const r = await rest<unknown[]>(d, `site_requests?select=id,at,kind,name,company,phone,email,scope,message,page,lang,status,handled_at${filter}&order=at.desc&limit=200`);
-  if (missingTable(r)) return json(200, { requests: [], missing: NOT_APPLIED });
-  if (!r.ok) return json(502, { error: 'ما قدرنا نقرا الطلبات' });
-  return json(200, { requests: r.data });
+  try { return json(200, { requests: await listRows(e.DB, status && STATUSES.includes(status) ? status : null) }); }
+  catch (err) { return missingTable(err) ? json(200, { requests: [], missing: NOT_APPLIED }) : json(502, { error: 'ما قدرنا نقرا الطلبات' }); }
+}
+
+async function idFrom(req: Request, limit: number): Promise<{ id: number; b: Record<string, unknown> } | null> {
+  try { const b = await readJson(req, limit); const id = Number(b.id); return Number.isInteger(id) && id > 0 ? { id, b } : null; } catch { return null; }
 }
 
 export async function updateRequest(req: Request, e: SiteEnv): Promise<Response> {
-  const d = db(e);
-  if (!d) return json(503, { error: 'Supabase غير مربوط' });
+  if (!e.DB) return json(503, { error: OFF });
   if (!sameOrigin(req)) return json(403, { error: 'طلب مرفوض' });
-  let b: Record<string, unknown>;
-  try { b = await readJson(req, 500); } catch { return json(400, { error: 'طلب غير صالح' }); }
-  const id = Number(b.id);
-  if (!Number.isInteger(id) || id < 1 || !STATUSES.includes(String(b.status))) return json(400, { error: 'طلب غير صالح' });
-  const r = await rest(d, `site_requests?id=eq.${id}`, { method: 'PATCH', prefer: 'return=minimal', body: { status: b.status, handled_at: b.status === 'new' ? null : new Date().toISOString() } });
-  return r.ok ? json(200, { ok: true }) : json(502, { error: 'ما انحفظ التعديل' });
+  const x = await idFrom(req, 500);
+  if (!x || !STATUSES.includes(String(x.b.status))) return json(400, { error: 'طلب غير صالح' });
+  try { return (await setStatus(e.DB, x.id, String(x.b.status))) ? json(200, { ok: true }) : json(404, { error: 'ما لقينا الطلب' }); }
+  catch { return json(502, { error: 'ما انحفظ التعديل' }); }
 }
 
 export async function deleteRequest(req: Request, e: SiteEnv): Promise<Response> {
-  const d = db(e);
-  if (!d) return json(503, { error: 'Supabase غير مربوط' });
+  if (!e.DB) return json(503, { error: OFF });
   if (!sameOrigin(req)) return json(403, { error: 'طلب مرفوض' });
-  let b: Record<string, unknown>;
-  try { b = await readJson(req, 200); } catch { return json(400, { error: 'طلب غير صالح' }); }
-  const id = Number(b.id);
-  if (!Number.isInteger(id) || id < 1) return json(400, { error: 'طلب غير صالح' });
-  const r = await rest(d, `site_requests?id=eq.${id}`, { method: 'DELETE', prefer: 'return=minimal' });
-  return r.ok ? json(200, { ok: true }) : json(502, { error: 'ما انحذف الطلب' });
+  const x = await idFrom(req, 200);
+  if (!x) return json(400, { error: 'طلب غير صالح' });
+  try { return (await deleteRow(e.DB, x.id)) ? json(200, { ok: true }) : json(404, { error: 'ما لقينا الطلب' }); }
+  catch { return json(502, { error: 'ما انحذف الطلب' }); }
 }

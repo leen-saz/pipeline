@@ -1,30 +1,38 @@
-// The requests table in Supabase (supabase/migrations/001_site_requests.sql), over its REST API with the service key.
-// Server only: the table has row level security on and no policies, so nothing else can read it.
-import type { SiteEnv } from './http';
+// The requests table in Cloudflare D1 (migrations/0001_site_requests.sql). Only the Worker can reach it: D1 has no
+// public endpoint, so the binding is the whole access control.
+import type { SiteRequest } from './site-request';
 
-export interface Db { url: string; key: string }
-export function db(e: SiteEnv): Db | null {
-  return e.SUPABASE_URL && e.SUPABASE_SERVICE_ROLE_KEY ? { url: e.SUPABASE_URL.replace(/\/+$/, ''), key: e.SUPABASE_SERVICE_ROLE_KEY } : null;
+export interface Row extends Omit<SiteRequest, 'scope'> { id: number; at: string; scope: string[]; status: string; handled_at: string | null }
+
+// D1 says "no such table" until the migration has been applied
+export const missingTable = (e: unknown) => /no such table/i.test(String((e as Error)?.message ?? e));
+
+export async function recentCount(db: D1Database, key: string, sinceIso: string): Promise<number> {
+  const r = await db.prepare('select count(*) as n from site_requests where ip_key = ?1 and at >= ?2').bind(key, sinceIso).first<{ n: number }>();
+  return r?.n ?? 0;
 }
 
-export async function rest<T = unknown>(d: Db, path: string, init: { method?: string; body?: unknown; prefer?: string } = {}): Promise<{ ok: boolean; status: number; data: T | null }> {
-  const headers: Record<string, string> = { apikey: d.key, authorization: `Bearer ${d.key}` };
-  if (init.body !== undefined) headers['content-type'] = 'application/json';
-  if (init.prefer) headers.prefer = init.prefer;
-  try {
-    const r = await fetch(`${d.url}/rest/v1/${path}`, {
-      method: init.method ?? 'GET', headers, signal: AbortSignal.timeout(8000),
-      ...(init.body !== undefined ? { body: JSON.stringify(init.body) } : {}),
-    });
-    const text = await r.text();
-    let data: T | null = null;
-    try { data = text ? JSON.parse(text) as T : null; } catch { /* not json */ }
-    return { ok: r.ok, status: r.status, data };
-  } catch {
-    return { ok: false, status: 0, data: null };
-  }
+export async function insertRequest(db: D1Database, r: SiteRequest, consentAt: string, key: string): Promise<void> {
+  await db.prepare(`insert into site_requests (kind, name, company, phone, email, scope, message, page, lang, consent_at, ip_key)
+    values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`)
+    .bind(r.kind, r.name, r.company, r.phone, r.email, JSON.stringify(r.scope), r.message, r.page, r.lang, consentAt, key).run();
 }
 
-// PostgREST says 42P01 / PGRST205 when the table is not there yet (the migration was not run)
-export const missingTable = (r: { status: number; data: unknown }) =>
-  r.status === 404 || /42P01|PGRST205/.test(JSON.stringify(r.data ?? ''));
+export async function listRows(db: D1Database, status: string | null): Promise<Row[]> {
+  const sql = `select id, at, kind, name, company, phone, email, scope, message, page, lang, status, handled_at from site_requests
+    ${status ? 'where status = ?1' : ''} order by at desc, id desc limit 200`;
+  const stmt = status ? db.prepare(sql).bind(status) : db.prepare(sql);
+  const { results } = await stmt.all<Omit<Row, 'scope'> & { scope: string }>();
+  return results.map(x => ({ ...x, scope: (() => { try { return JSON.parse(x.scope) as string[]; } catch { return []; } })() }));
+}
+
+export async function setStatus(db: D1Database, id: number, status: string): Promise<boolean> {
+  const r = await db.prepare('update site_requests set status = ?1, handled_at = ?2 where id = ?3')
+    .bind(status, status === 'new' ? null : new Date().toISOString(), id).run();
+  return (r.meta?.changes ?? 0) > 0;
+}
+
+export async function deleteRow(db: D1Database, id: number): Promise<boolean> {
+  const r = await db.prepare('delete from site_requests where id = ?1').bind(id).run();
+  return (r.meta?.changes ?? 0) > 0;
+}

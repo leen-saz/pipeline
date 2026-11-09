@@ -1,5 +1,5 @@
 # Manual deploy to Cloudflare (Actions → Deploy → Run workflow). Needs the repo secrets CLOUDFLARE_API_TOKEN and
-# CLOUDFLARE_ACCOUNT_ID; the Worker's own secrets (Supabase, inbox password) are set once with wrangler secret put.
+# CLOUDFLARE_ACCOUNT_ID; the Worker's own secrets (inbox password, IP salt) are set once with wrangler secret put.
 name: Deploy
 on:
   workflow_dispatch:

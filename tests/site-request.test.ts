@@ -1,11 +1,34 @@
-// The request form: field checks (src/lib/site-request.ts), the API (src/lib/requests-api.ts) and the inbox password
-// (src/lib/http.ts). Synthetic people and numbers only; fetch is stubbed, so nothing leaves the test.
-import { afterEach, describe, expect, it, vi } from 'vitest';
+// The request form: field checks (src/lib/site-request.ts), the API (src/lib/requests-api.ts) on a real SQLite copy of
+// the D1 table (migrations/0001_site_requests.sql, through node:sqlite), and the inbox password (src/lib/http.ts).
+// Synthetic people and numbers only; fetch is stubbed for the webhook, so nothing leaves the test.
+/// <reference types="vite/client" />
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanRequest, phone, ipKey, LIMIT_PER_HOUR } from '../src/lib/site-request';
 import { submitRequest, listRequests, updateRequest, deleteRequest } from '../src/lib/requests-api';
 import { inboxAllowed, safeEqual, type SiteEnv } from '../src/lib/http';
+import MIGRATION from '../migrations/0001_site_requests.sql?raw';
 
-const E: SiteEnv = { SUPABASE_URL: 'https://sb.example', SUPABASE_SERVICE_ROLE_KEY: 'service', INBOX_PASSWORD: 'open-sesame' };
+// node:sqlite behind the few D1 calls the store makes (prepare → bind → first / all / run)
+const { DatabaseSync } = await import('node:sqlite' as string);
+function d1(migrate = true): { db: D1Database; sql: { prepare(q: string): { all(...a: unknown[]): Record<string, unknown>[] } } } {
+  const sql = new DatabaseSync(':memory:');
+  if (migrate) sql.exec(MIGRATION);
+  const prepare = (q: string) => {
+    let args: unknown[] = [];
+    const st = {
+      bind: (...a: unknown[]) => { args = a; return st; },
+      first: async () => sql.prepare(q).get(...args) ?? null,
+      all: async () => ({ results: sql.prepare(q).all(...args) }),
+      run: async () => ({ meta: { changes: Number(sql.prepare(q).run(...args).changes) } }),
+    };
+    return st;
+  };
+  return { db: { prepare } as unknown as D1Database, sql };
+}
+let E: SiteEnv & { DB: D1Database };
+let SQL: ReturnType<typeof d1>['sql'];
+beforeEach(() => { const x = d1(); SQL = x.sql; E = { DB: x.db, IP_SALT: 'salt', INBOX_PASSWORD: 'open-sesame' }; });
+const rows = () => SQL.prepare('select * from site_requests order by id').all();
 const SITE = 'https://apipeline.example';
 const good = { kind: 'security', name: 'سارة', company: 'شركة تجربة', phone: '٠٥٠١٢٣٤٥٦٧', email: 'Test@Example.com', scope: ['web', 'nope', 'web'], message: 'نبي فحص', consent: true, page: '/security/', lang: 'ar', t: 9000 };
 
@@ -44,113 +67,111 @@ describe('request fields', () => {
   });
 });
 
-type Seen = { url: string; method: string; body?: string };
-function world({ recent = 0, rows = [] as unknown[], storeStatus = 201 } = {}) {
-  const seen: Seen[] = [];
-  vi.stubGlobal('fetch', async (u: string | URL, init?: RequestInit) => {
-    const url = String(u), method = init?.method ?? 'GET';
-    seen.push({ url, method, ...(typeof init?.body === 'string' ? { body: init.body } : {}) });
-    if (url.includes('/site_requests') && method === 'GET' && url.includes('ip_key=eq.')) return new Response(JSON.stringify(Array.from({ length: recent }, (_, i) => ({ id: i }))), { status: 200 });
-    if (url.includes('/site_requests') && method === 'GET') return new Response(JSON.stringify(rows), { status: 200 });
-    if (url.includes('/site_requests') && method === 'POST') return new Response('', { status: storeStatus });
-    return new Response(null, { status: 204 });
-  });
-  return seen;
-}
 const H = (extra: Record<string, string> = {}) => ({ origin: SITE, 'sec-fetch-site': 'same-origin', 'content-type': 'application/json', 'cf-connecting-ip': '203.0.113.9', ...extra });
 const send = (body: unknown, headers: Record<string, string> = {}, env: SiteEnv = E) =>
   submitRequest(new Request(`${SITE}/api/request`, { method: 'POST', body: JSON.stringify(body), headers: H(headers) }), env);
 const inbox = (method: string, body?: unknown, query = '', headers: Record<string, string> = {}) =>
   new Request(`${SITE}/api/requests${query}`, { method, headers: H(headers), ...(body ? { body: JSON.stringify(body) } : {}) });
+const quiet = () => vi.spyOn(console, 'log').mockImplementation(() => {});
 
 describe('POST /api/request', () => {
   it('stores the request with consent time and a visitor key, never the address; the log has no phone', async () => {
-    const seen = world();
-    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const r = await send(good);
-    expect(r.status).toBe(200);
-    const post = seen.find(s => s.url.endsWith('/rest/v1/site_requests') && s.method === 'POST')!;
-    const row = JSON.parse(post.body!);
-    expect(row).toMatchObject({ kind: 'security', phone: '+966501234567', scope: ['web'] });
-    expect(row.consent_at).toMatch(/^\d{4}-/);
-    expect(row.ip_key).toMatch(/^[0-9a-f]{32}$/);
-    expect(post.body).not.toContain('203.0.113.9');
+    const log = quiet();
+    expect((await send(good)).status).toBe(200);
+    const [row] = rows();
+    expect(row).toMatchObject({ kind: 'security', phone: '+966501234567', scope: '["web"]', status: 'new', page: '/security/' });
+    expect(String(row!.consent_at)).toMatch(/^\d{4}-\d\d-\d\dT/);
+    expect(String(row!.at)).toMatch(/^\d{4}-\d\d-\d\dT.*Z$/);
+    expect(row!.ip_key).toMatch(/^[0-9a-f]{32}$/);
+    expect(JSON.stringify(row)).not.toContain('203.0.113.9');
     expect(JSON.stringify(log.mock.calls)).not.toMatch(/9665|سارة|example\.com/);
   });
-  it('a cross-site post is refused before anything is read or stored', async () => {
-    const seen = world();
+  it('a cross-site post is refused and nothing is stored', async () => {
     expect((await send(good, { origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' })).status).toBe(403);
-    expect(seen).toEqual([]);
+    expect(rows()).toEqual([]);
   });
-  it('without Supabase set up, it says so and points to WhatsApp', async () => {
-    const r = await send(good, {}, {});
-    expect(r.status).toBe(503);
-    expect((await r.json() as { error: string }).error).toContain('واتساب');
+  it('without the database or the salt, it says so and points to WhatsApp', async () => {
+    for (const env of [{}, { DB: E.DB }]) {
+      const r = await send(good, {}, env);
+      expect(r.status).toBe(503);
+      expect((await r.json() as { error: string }).error).toContain('واتساب');
+    }
   });
   it('a bot gets OK and nothing is stored', async () => {
-    const seen = world();
     expect((await send({ ...good, website: 'spam' })).status).toBe(200);
-    expect(seen.some(s => s.method === 'POST')).toBe(false);
+    expect(rows()).toEqual([]);
   });
   it('field errors come back per field, nothing stored', async () => {
-    const seen = world();
     const r = await send({ ...good, phone: '12', consent: false });
     expect(r.status).toBe(400);
     expect(Object.keys((await r.json() as { fields: object }).fields).sort()).toEqual(['consent', 'phone']);
-    expect(seen.some(s => s.method === 'POST')).toBe(false);
+    expect(rows()).toEqual([]);
   });
   it('a body that is too big or not JSON is refused', async () => {
-    world();
     expect((await submitRequest(new Request(`${SITE}/api/request`, { method: 'POST', body: 'x'.repeat(7000), headers: H() }), E)).status).toBe(400);
     expect((await submitRequest(new Request(`${SITE}/api/request`, { method: 'POST', body: '[1]', headers: H() }), E)).status).toBe(400);
   });
-  it(`the ${LIMIT_PER_HOUR + 1}th request from one visitor in an hour waits`, async () => {
-    const seen = world({ recent: LIMIT_PER_HOUR });
+  it(`the ${LIMIT_PER_HOUR + 1}th request from one visitor in an hour waits; another visitor does not`, async () => {
+    quiet();
+    for (let i = 0; i < LIMIT_PER_HOUR; i++) expect((await send(good)).status).toBe(200);
     expect((await send(good)).status).toBe(429);
-    expect(seen.some(s => s.method === 'POST')).toBe(false);
+    expect((await send(good, { 'cf-connecting-ip': '198.51.100.7' })).status).toBe(200);
+    expect(rows()).toHaveLength(LIMIT_PER_HOUR + 1);
   });
-  it('a store that fails says so (and points to WhatsApp)', async () => {
-    world({ storeStatus: 500 });
+  it('the table itself refuses what the form would never send', () => {
+    const bad = (cols: string) => () => SQL.prepare(`insert into site_requests (kind, name, phone, consent_at, ip_key${cols ? ', ' + cols.split('=')[0] : ''}) values ('board', 'سارة', '+966501234567', 'x', 'k'${cols ? ", '" + cols.split('=')[1] + "'" : ''})`).all();
+    expect(bad('')).not.toThrow();
+    expect(bad('status=deleted')).toThrow();
+    expect(bad('lang=fr')).toThrow();
+    expect(bad('scope=not json')).toThrow();
+  });
+  it('before the migration, a submit says so (and points to WhatsApp)', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    const r = await send(good);
+    const r = await send(good, {}, { ...E, DB: d1(false).db });
     expect(r.status).toBe(503);
     expect((await r.json() as { error: string }).error).toContain('واتساب');
   });
   it('the webhook note says what was asked and where to read it, without phone or email', async () => {
-    const seen = world();
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    quiet();
+    const seen: { url: string; body: string }[] = [];
+    vi.stubGlobal('fetch', async (u: string, init: RequestInit) => { seen.push({ url: String(u), body: String(init.body) }); return new Response(null, { status: 204 }); });
     await send(good, {}, { ...E, REQUESTS_WEBHOOK: 'https://hooks.example/abc' });
     const hook = seen.find(s => s.url === 'https://hooks.example/abc')!;
-    expect(JSON.parse(hook.body!).text).toContain('فحص أمني');
-    expect(JSON.parse(hook.body!).text).toContain(`${SITE}/inbox/`);
+    expect(JSON.parse(hook.body).text).toContain('فحص أمني');
+    expect(JSON.parse(hook.body).text).toContain(`${SITE}/inbox/`);
     expect(hook.body).not.toMatch(/9665|example\.com|0501/);
   });
 });
 
 describe('/api/requests (inbox)', () => {
-  it('reads, filters, updates and deletes', async () => {
-    const seen = world({ rows: [{ id: 1, kind: 'board', name: 'x', phone: '+966501234567', status: 'new' }] });
-    const g = await listRequests(inbox('GET', undefined, '?status=new'), E);
-    expect(g.status).toBe(200);
-    expect((await g.json() as { requests: unknown[] }).requests).toHaveLength(1);
-    expect(seen.find(s => s.url.includes('/site_requests?select='))!.url).toContain('status=eq.new');
-    expect((await updateRequest(inbox('PATCH', { id: 1, status: 'contacted' }), E)).status).toBe(200);
-    expect(JSON.parse(seen.find(s => s.method === 'PATCH')!.body!)).toMatchObject({ status: 'contacted' });
-    expect((await updateRequest(inbox('PATCH', { id: 1, status: 'deleted' }), E)).status).toBe(400);
-    expect((await deleteRequest(inbox('DELETE', { id: 1 }), E)).status).toBe(200);
-    expect(seen.find(s => s.method === 'DELETE')!.url).toContain('id=eq.1');
+  it('reads newest first, filters, updates and deletes', async () => {
+    quiet();
+    await send(good); await send({ ...good, kind: 'board', page: '/' }, { 'cf-connecting-ip': '198.51.100.7' });
+    const all = await (await listRequests(inbox('GET'), E)).json() as { requests: { id: number; kind: string; scope: string[] }[] };
+    expect(all.requests.map(r => r.kind)).toEqual(['board', 'security']);
+    expect(all.requests[1]!.scope).toEqual(['web']);
+    const id = all.requests[1]!.id;
+    expect((await updateRequest(inbox('PATCH', { id, status: 'contacted' }), E)).status).toBe(200);
+    expect(rows().find(r => r.id === id)).toMatchObject({ status: 'contacted' });
+    expect(String(rows().find(r => r.id === id)!.handled_at)).toMatch(/^\d{4}-/);
+    const only = await (await listRequests(inbox('GET', undefined, '?status=contacted'), E)).json() as { requests: unknown[] };
+    expect(only.requests).toHaveLength(1);
+    expect((await updateRequest(inbox('PATCH', { id, status: 'deleted' }), E)).status).toBe(400);
+    expect((await updateRequest(inbox('PATCH', { id: 999, status: 'closed' }), E)).status).toBe(404);
+    expect((await deleteRequest(inbox('DELETE', { id }), E)).status).toBe(200);
+    expect(rows()).toHaveLength(1);
+    expect((await deleteRequest(inbox('DELETE', { id }), E)).status).toBe(404);
   });
   it('changes from another site are refused (the browser sends the password on its own)', async () => {
-    const seen = world();
+    quiet(); await send(good);
     const evil = { origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' };
     expect((await updateRequest(inbox('PATCH', { id: 1, status: 'closed' }, '', evil), E)).status).toBe(403);
     expect((await deleteRequest(inbox('DELETE', { id: 1 }, '', evil), E)).status).toBe(403);
-    expect(seen).toEqual([]);
+    expect(rows()[0]).toMatchObject({ status: 'new' });
   });
-  it('before the migration, it says which file to run', async () => {
-    vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ code: '42P01' }), { status: 404 }));
-    const j = await (await listRequests(inbox('GET'), E)).json() as { missing?: string };
-    expect(j.missing).toContain('001_site_requests.sql');
+  it('before the migration, it says which command to run', async () => {
+    const j = await (await listRequests(inbox('GET'), { ...E, DB: d1(false).db })).json() as { missing?: string };
+    expect(j.missing).toContain('d1 migrations apply');
   });
 });
 
