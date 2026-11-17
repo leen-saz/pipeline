@@ -94,7 +94,7 @@ describe('POST /api/request', () => {
     for (const env of [{}, { DB: E.DB }]) {
       const r = await send(good, {}, env);
       expect(r.status).toBe(503);
-      expect((await r.json() as { error: string }).error).toContain('جرّب بعد شوي');
+      expect((await r.json() as { error: string }).error).toContain('حاول بعد قليل');
     }
   });
   it('a bot gets OK and nothing is stored', async () => {
@@ -129,7 +129,7 @@ describe('POST /api/request', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const r = await send(good, {}, { ...E, DB: d1(false).db });
     expect(r.status).toBe(503);
-    expect((await r.json() as { error: string }).error).toContain('جرّب بعد شوي');
+    expect((await r.json() as { error: string }).error).toContain('حاول بعد قليل');
   });
   it('the webhook note says what was asked and where to read it, without phone or email', async () => {
     quiet();

@@ -14,8 +14,8 @@ import { mailRequest } from './mail';
 const STATUSES = ['new', 'contacted', 'closed'];
 const NOT_APPLIED = 'جدول الطلبات ما انضاف بعد: شغّل npx wrangler d1 migrations apply apipeline-site --remote';
 const OFF = 'قاعدة الطلبات غير مربوطة';
-const PAUSED = 'الإرسال متوقف مؤقتًا، جرّب بعد شوي';
-const FAILED = 'ما قدرنا نرسل طلبك الحين، جرّب بعد شوي';
+const PAUSED = 'الإرسال متوقف مؤقتًا، حاول بعد قليل';
+const FAILED = 'تعذّر إرسال طلبك الآن، حاول بعد قليل';
 
 async function notify(hook: string | undefined, r: SiteRequest, origin: string) {
   if (!hook || !/^https:\/\//.test(hook)) return;
@@ -38,7 +38,7 @@ export async function submitRequest(req: Request, e: SiteEnv): Promise<Response>
   if (db && e.IP_SALT) {
     const key = await ipKey(req.headers.get('cf-connecting-ip') || 'unknown', e.IP_SALT);
     try {
-      if (await recentCount(db, key, new Date(Date.now() - 3600_000).toISOString()) >= LIMIT_PER_HOUR) return json(429, { error: 'وصلنا طلبك قبل شوي. بنتواصل معك قريب' });
+      if (await recentCount(db, key, new Date(Date.now() - 3600_000).toISOString()) >= LIMIT_PER_HOUR) return json(429, { error: 'استلمنا طلبك قبل قليل، وسنتواصل معك قريبًا' });
       await insertRequest(db, c.data, new Date().toISOString(), key);
       stored = true;
     } catch (err) {

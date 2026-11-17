@@ -102,6 +102,7 @@
 .st-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .st-grid.two{grid-template-columns:repeat(2,1fr)}
 .st-grid.four{grid-template-columns:repeat(4,1fr)}
+.st-grid.three{grid-template-columns:repeat(3,1fr)}
 .st-tile{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:28px;display:flex;flex-direction:column;gap:10px}
 .st-tile h3{font:700 20px/1.35 var(--f-display)}
 .st-tile p{font:400 15px/1.8 var(--f-text);color:var(--muted);margin:0}
@@ -314,7 +315,7 @@
   .st-top #lang{margin-inline-start:auto}
   .st-sec{padding:84px 0}
   .st-words-sec{padding:96px 0}
-  .st-grid,.st-grid.two,.st-grid.four{grid-template-columns:1fr}
+  .st-grid,.st-grid.two,.st-grid.three,.st-grid.four{grid-template-columns:1fr}
   .st-stats dd{font-size:15px}
   .st-end{padding:96px 0}
   .st-term{font-size:12px}
@@ -464,7 +465,7 @@
   --tint:color-mix(in srgb,#C8893F 8%,transparent);
   --tint-2:color-mix(in srgb,#C8893F 14%,transparent);
   --focus:color-mix(in srgb,#C8893F 40%,transparent);
-  --f-display:"Inter","General Sans","Thmanyah Sans",system-ui,sans-serif;
+  --f-display:"Majalla Head","Inter","General Sans","Thmanyah Sans",system-ui,sans-serif;
   --glass:radial-gradient(120% 70% at 50% 125%,rgba(226,176,114,.30),rgba(200,137,63,.08) 45%,transparent 70%),linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
   --glass-edge:inset 0 0 0 1px rgba(255,255,255,.7),inset 0 -1px 0 rgba(26,26,26,.05),0 24px 60px -18px rgba(60,44,28,.18);
   --shadow-lg:0 30px 70px -20px rgba(60,44,28,.22);
@@ -644,3 +645,10 @@ html.st-static .st-warm::after{animation:none}
   .st-faq summary{padding:18px 18px;font-size:16px}.st-faq p{padding:0 18px 20px}
   .st-foot .st-wrap{grid-template-columns:1fr;align-items:start}
 }
+
+/* ==== Headings in Sakkal Majalla (Leen's choice). The font is a Microsoft font whose licence forbids serving it as a
+   web font, so it is never shipped with the site: local() picks it up where it is installed (Windows, Office), and
+   everyone else gets Thmanyah Display. Majalla draws small, hence size-adjust. */
+@font-face{font-family:"Majalla Head";src:local("Sakkal Majalla"),local("SakkalMajalla");font-weight:400;size-adjust:128%;font-display:swap}
+@font-face{font-family:"Majalla Head";src:local("Sakkal Majalla Bold"),local("SakkalMajalla-Bold"),local("Sakkal Majalla");font-weight:700 900;size-adjust:128%;font-display:swap}
+:root{--f-display:"Majalla Head","Thmanyah Display","Thmanyah Sans",serif}

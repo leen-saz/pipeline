@@ -11,7 +11,7 @@ const SCOPE_AR: Record<string, string> = { code: 'الكود', web: 'الموق�
 export function requestLines(r: SiteRequest): [string, string][] {
   const rows: [string, string | null][] = [
     ['الطلب', KIND_AR[r.kind]], ['الاسم', r.name], ['الشركة', r.company], ['الجوال', r.phone], ['الإيميل', r.email],
-    ['وش نفحص', r.scope.length ? r.scope.map(s => SCOPE_AR[s] ?? s).join('، ') : null], ['الرسالة', r.message],
+    ['ما نفحصه', r.scope.length ? r.scope.map(s => SCOPE_AR[s] ?? s).join('، ') : null], ['الرسالة', r.message],
     ['الصفحة', r.page], ['اللغة', r.lang === 'en' ? 'English' : 'عربي'],
   ];
   return rows.filter((x): x is [string, string] => !!x[1]);
