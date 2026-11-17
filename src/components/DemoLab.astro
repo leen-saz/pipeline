@@ -63,9 +63,10 @@ const IDEAS = [
         </div>
         <div class="dm-kpis" id="dmKpis"></div>
         <div class="dm-two">
-          <figure class="dm-card">
-            <figcaption>القمع</figcaption>
-            <div id="dmFunnel" class="dm-funnel"></div>
+          <figure class="dm-card dm-wide">
+            <figcaption>رحلة العميل <small>مرّر على أي مرحلة أو نسبة</small></figcaption>
+            <div class="dm-fwrap"><svg id="dmFunnel" class="dm-funnel" viewBox="0 0 960 250" role="group" aria-label="رحلة العميل: الظهور، النقرات، أضاف للسلة، اشترى"></svg></div>
+            <p id="dmFDetail" class="dm-fdetail" aria-live="polite"></p>
           </figure>
           <figure class="dm-card">
             <figcaption>الصرف والمبيعات باليوم</figcaption>

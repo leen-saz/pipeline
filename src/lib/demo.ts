@@ -191,6 +191,94 @@ function series(days: number) {
   }
   return out;
 }
+// ---------------------------------------------------------------- القمع الأفقي (نفس شكل ويل)
+// شريط واحد ينساب من اليمين لليسار: ارتفاعه عند كل مرحلة من حجمها، ويضيق بين المرحلتين حسب قوة الخطوة.
+const FW = 960, FH = 250, MID = 118, MAX_H = 170, MIN_H = 26, EASE = 0.25, NECK = 0.6, MIN_NECK = 8;
+const FCOL = ['#E9B98A', '#D9965C', '#BF7438', '#8F4F1F'];
+const STAGES = ['الظهور', 'النقرات', 'أضاف للسلة', 'اشترى'];
+const RATE_L = ['نسبة النقر', 'نسبة الإضافة', 'نسبة الشراء'];
+const TARGET = [0.01, 0.08, 0.12];
+type Shape = { heights: number[]; waists: number[] };
+const fShape = (v: number[], scores: number[]): Shape => {
+  const top = Math.max(1, ...v), heights = v.map(x => (x <= 0 ? MIN_H : MIN_H + (MAX_H - MIN_H) * (x / top) ** EASE));
+  return { heights, waists: scores.map((sc, i) => Math.max(MIN_NECK, Math.min(heights[i]!, heights[i + 1]!) * NECK * Math.max(0.35, Math.min(1, sc)))) };
+};
+const sx = (i: number) => FW - (i + 0.5) * (FW / 4);
+const lx = (i: number) => (sx(i) + sx(i + 1)) / 2;
+function bandPath(s: Shape) {
+  const slot = FW / 4, pts: { x: number; h: number }[] = [];
+  for (let i = 3; i >= 0; i--) {
+    pts.push({ x: sx(i) - slot * 0.21, h: s.heights[i]! }, { x: sx(i) + slot * 0.21, h: s.heights[i]! });
+    if (i) pts.push({ x: lx(i - 1), h: s.waists[i - 1]! });
+  }
+  pts[0]!.x = 0; pts[pts.length - 1]!.x = FW;
+  const edge = (list: typeof pts, sign: 1 | -1, move: boolean) => list.map((p, k) => {
+    const y = MID + (sign * p.h) / 2;
+    if (k === 0) return `${move ? 'M' : 'L'}${p.x},${y}`;
+    const q = list[k - 1]!, qy = MID + (sign * q.h) / 2, cx = (q.x + p.x) / 2;
+    return `C${cx},${qy} ${cx},${y} ${p.x},${y}`;
+  }).join('');
+  return edge(pts, -1, true) + edge([...pts].reverse(), 1, false) + 'Z';
+}
+let fNow: Shape | null = null, fAnim = 0;
+function drawFunnel(svg: SVGSVGElement, v: number[], spend: number) {
+  const rates = [1, 2, 3].map(i => v[i]! / Math.max(1, v[i - 1]!));
+  const scores = rates.map((r, i) => r / TARGET[i]!);
+  const weakest = scores.indexOf(Math.min(...scores)), bottleneck = scores[weakest]! < 1 ? weakest : -1;
+  const costs: [string, string][] = [
+    ['تكلفة الألف ظهور', `${ar((spend / v[0]!) * 1000, 1)} ر.س`], ['تكلفة النقرة', `${ar(spend / v[1]!, 2)} ر.س`],
+    ['تكلفة الإضافة', `${ar(spend / v[2]!, 1)} ر.س`], ['تكلفة الطلب', `${ar(spend / v[3]!)} ر.س`],
+  ];
+  const target = fShape(v, scores);
+  const stops = [3, 2, 1, 0].map(i => `<stop offset="${sx(i) / FW}" stop-color="${FCOL[i]}"/>`).join('');
+  const stages = STAGES.map((n, i) => {
+    const hh = target.heights[i]! / 2, onBand = hh * 2 >= 56, x = sx(i);
+    const vy = onBand ? MID - 4 : MID - hh - 8, ly = onBand ? MID + 18 : MID + hh + 16;
+    return `<g class="fs" tabindex="0" role="button" data-k="s${i}" aria-label="${n}: ${ar(v[i]!)}">
+      <rect x="${x - 80}" y="18" width="160" height="${FH - 26}" rx="12" class="hit"/>
+      <text x="${x}" y="22" class="t-n">${ar(i + 1)}. ${n}</text>
+      <text x="${x}" y="${vy}" class="t-v ${onBand ? 'in' : ''}">${ar(v[i]!)}</text>
+      <text x="${x}" y="${ly}" class="t-l ${onBand ? 'in' : ''}">${i ? 'شخص' : 'مرة'}</text>
+      <text x="${x}" y="${FH - 34}" class="t-cl">${costs[i]![0]}</text>
+      <text x="${x}" y="${FH - 14}" class="t-c">${costs[i]![1]}</text></g>`;
+  }).join('');
+  const links = rates.map((r, i) => {
+    const x = lx(i), weak = i === bottleneck;
+    return `<g class="fl ${weak ? 'weak' : ''}" tabindex="0" role="button" data-k="l${i}" aria-label="${RATE_L[i]}: ${ar(r * 100, 1)}٪${weak ? '، عنق الزجاجة' : ''}">
+      <rect x="${x - 44}" y="${MID - 60}" width="88" height="120" rx="10" class="hit"/>
+      ${weak ? `<text x="${x}" y="${MID - 34}" class="t-bn">عنق الزجاجة</text>` : ''}
+      <rect x="${x - 42}" y="${MID - 13}" width="84" height="26" rx="13" class="pill"/>
+      <text x="${x}" y="${MID + 5}" class="t-r">${ar(r * 100, 1)}٪</text></g>`;
+  }).join('');
+  svg.innerHTML = `<defs><linearGradient id="dmFill" x1="0" x2="1" y1="0" y2="0">${stops}</linearGradient></defs><path class="band" fill="url(#dmFill)"/>${stages}${links}`;
+  const path = svg.querySelector('path')!, from = fNow ?? fShape([0, 0, 0, 0], [1, 1, 1]);
+  const mix = (a: number[], b: number[], t: number) => a.map((x, i) => x + (b[i]! - x) * t);
+  cancelAnimationFrame(fAnim);
+  const t0 = performance.now(), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const step = (now: number) => {
+    const p = reduce ? 1 : Math.min(1, (now - t0) / 700), e = 1 - (1 - p) ** 3;
+    fNow = { heights: mix(from.heights, target.heights, e), waists: mix(from.waists, target.waists, e) };
+    path.setAttribute('d', bandPath(fNow));
+    if (p < 1) fAnim = requestAnimationFrame(step);
+  };
+  fAnim = requestAnimationFrame(step);
+  const detail = $('#dmFDetail');
+  const show = (k: string | null) => {
+    if (!detail) return;
+    if (!k) { detail.textContent = ''; return; }
+    const i = Number(k.slice(1));
+    if (k[0] === 'l') {
+      const ok = scores[i]! >= 1;
+      detail.innerHTML = `<b>${STAGES[i]} ← ${STAGES[i + 1]}</b> · ${RATE_L[i]}: <b>${ar(rates[i]! * 100, 1)}٪</b> · الهدف ${ar(TARGET[i]! * 100, 1)}٪ <span class="${ok ? 'ok' : 'bad'}">${ok ? 'فوق الهدف' : 'تحت الهدف، هنا أكبر تسرّب'}</span>`;
+    } else detail.innerHTML = `<b>${ar(i + 1)}. ${STAGES[i]}</b> · ${ar(v[i]!)} · ${costs[i]![0]}: <b>${costs[i]![1]}</b>`;
+  };
+  svg.querySelectorAll<SVGGElement>('[data-k]').forEach(g => {
+    const k = g.dataset.k!;
+    g.addEventListener('mouseenter', () => show(k)); g.addEventListener('focus', () => show(k)); g.addEventListener('click', () => show(k));
+    g.addEventListener('mouseleave', () => show(null)); g.addEventListener('blur', () => show(null));
+  });
+}
+
 function analytics() {
   const kpis = $('#dmKpis'), funnel = $('#dmFunnel'), chart = $('#dmChart'), seg = $('#dmRange');
   if (!kpis || !funnel || !chart || !seg) return;
@@ -211,11 +299,7 @@ function analytics() {
       tile('العائد على الصرف', `${ar(sales / spend, 2)}×`, chg(sales / spend, pSales / pSpend), 'المبيعات ÷ الصرف'),
     ].join('');
     const impr = spend * 210, clicks = Math.round(impr * .012), carts = Math.round(clicks * .09);
-    const steps: [string, number][] = [['الظهور', impr], ['النقرات', clicks], ['أضاف للسلة', carts], ['اشترى', orders]];
-    funnel.innerHTML = steps.map(([l, v], i) => {
-      const rate = i ? `<span class="r">${ar((100 * v) / steps[i - 1]![1], 1)}٪</span>` : '';
-      return `<div class="dm-fs" style="--w:${[100, 78, 56, 38][i]}%"><span class="l">${l}</span><b>${ar(v)}</b>${rate}</div>`;
-    }).join('');
+    drawFunnel(funnel as unknown as SVGSVGElement, [impr, clicks, carts, orders], spend);
     const W = 320, H = 140, P = 8, max = Math.max(...d.map(x => x.sales));
     const pts = (k: 'spend' | 'sales') => d.map((x, i) => `${P + (i * (W - 2 * P)) / Math.max(1, d.length - 1)},${H - P - ((H - 2 * P) * x[k]) / max}`).join(' ');
     chart.innerHTML = `<polyline class="ln a" points="${pts('sales')}"/><polyline class="ln b" points="${pts('spend')}"/>`;
