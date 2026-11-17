@@ -2,14 +2,14 @@
 // Footer for every page. The hero video plays again behind it (cinematic-web-builder, phase 7): muted, no overlay,
 // only a fade at the top edge into the page colour; it waits off screen (preload="none") until the page reaches it.
 import { NAV, CONTACT, wa } from '../lib/public-site';
-interface Props { line?: string }
-const { line } = Astro.props;
+interface Props { line?: string; video?: boolean }  // video={false}: no video, a warm colour field instead (the landing)
+const { line, video = true } = Astro.props;
 ---
-<div class="st-foot-band">
-  <video muted playsinline loop autoplay preload="none" poster="/assets/video/light-poster.jpg" aria-hidden="true" data-foot-video disablepictureinpicture>
+<div class={video ? 'st-foot-band' : 'st-foot-band st-foot-field'}>
+  {video && <video muted playsinline loop autoplay preload="none" poster="/assets/video/light-poster.jpg" aria-hidden="true" data-foot-video disablepictureinpicture>
     <source media="(max-width: 899px)" src="/assets/video/light-540.mp4" type="video/mp4">
     <source src="/assets/video/light-720.mp4" type="video/mp4">
-  </video>
+  </video>}
   {line && <p class="st-foot-line">{line}</p>}
   <footer class="st-foot">
     <div class="st-wrap">

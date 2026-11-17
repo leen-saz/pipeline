@@ -6,29 +6,44 @@ export const prerender = true;
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import RequestForm from '../components/RequestForm.astro';
-import CineHero from '../components/CineHero.astro';
+import OrbHero from '../components/OrbHero.astro';
+import PillCards from '../components/PillCards.astro';
+import DemoLab from '../components/DemoLab.astro';
 
 const ar = (n: number) => n.toLocaleString('ar-SA');
 const LOGOS = ['meta', 'googleads', 'snapchat', 'tiktok', 'googleanalytics', 'x', 'pinterest', 'reddit', 'googlesearchconsole', 'posthog'];
 
+// Pill cards rows (src/components/PillCards.astro): the agents, the platforms, the loop, the numbers
+const PILL_ROWS = [
+  ['احلم', 'التحليلات', 'الميديا باير', 'السوشال', 'الرصد', 'التصميم', 'الصوت'],
+  ['Meta', 'Google', 'Snapchat', 'TikTok', 'GA4', 'سلة', 'زد', 'X'],
+  ['يسحب كل ساعة', 'يحلل السبب', 'يقترح القرار', 'تعتمد أنت', 'يسجّل الإيصال'],
+  ['العائد على الصرف', 'تكلفة الطلب', 'نسبة النقر', 'الميزانية اليومية', 'القمع', 'السجل'],
+];
+const PILL_DRIFT = ['يصرف بلا طلب', 'الجمهور تعب منه', 'رقم بلا سبب', 'ميزانية في المكان الغلط'];
 const STEPS = [
-  ['يسحب', 'كل منصاتك، صورة وحدة', 'كل ساعة يجيب أرقام Meta وGoogle وSnapchat وTikTok وGA4 لنفس اللوحة. بدون ملفات تصدير، وبدون نسخ ولصق.'],
-  ['يقترح', 'الأرقام تتحوّل لقرار', 'إيقاف إعلان يصرف بلا نتيجة، رفع ميزانية اللي تكلفته تحت الهدف، أو مادة إعلانية جديدة.'],
-  ['يراجع', 'قواعدك قبل أي خطوة', 'المراجع يفحص كل اقتراح على قواعدك وحدود ميزانيتك، واللي ما يطابق ما ينتقل للتنفيذ.'],
+  ['يسحب', 'كل منصاتك، كل ساعة', 'يجيب أرقام Meta وGoogle وSnapchat وTikTok وGA4 ومبيعات متجرك لنفس اللوحة. بدون ملفات تصدير، وبدون نسخ ولصق.'],
+  ['يحلل', 'الرقم ومعه سببه', 'يقارن كل رقم بالفترة اللي قبلها، ويقول لك وش المنصة أو الإعلان اللي حرّكه.'],
+  ['يقترح', 'قرار جاهز بسببه ومخاطرته', 'إيقاف إعلان يصرف بلا نتيجة، رفع ميزانية اللي عائده فوق الهدف، أو كرييتف جديد. ومع كل اقتراح كيف نقيس نجاحه.'],
   ['تعتمد', 'أنت صاحب القرار', 'موافقة، تعديل، أو رفض بسبب. في وضع الموافقة ما يتنفّذ شي بدونك.'],
-  ['يتعلّم', 'كل نتيجة، درس جديد', 'يقيس نتيجة كل قرار بعد التنفيذ، ويطلع منه درس يستخدمه في الاقتراح الجاي.'],
+  ['يسجّل', 'كل خطوة لها إيصال', 'كل تنفيذ ينكتب في السجل، ويقيس نتيجته بعد ٣ و٧ أيام، ويتعلم منها للاقتراح الجاي.'],
 ];
 
 const AGENTS = [
-  ['الإيجنتس', 'المدير', 'يوزّع المهام على الإيجنتس ويجمع موافقاتك في مكان واحد.'],
-  ['الإيجنتس', 'التتبع', 'منصة وقفت أرقامها، أو ليدز بدون رقم إعلان. كل مشكلة معها حلها.'],
-  ['الإيجنتس', 'الامتثال', 'يفحص النص على قواعد وزارة الصحة والمنصات، وينبّهك بس.'],
-  ['الإيجنتس', 'الرصد', 'وش يشد الناس في منشوراتك ومنشورات منافسينك.'],
-  ['الإيجنتس', 'التصميم', 'مقاسات جاهزة لكل منصة، والنص دايم طبقة فوق الصورة.'],
-  ['الإيجنتس', 'الصوت', 'نص الفويس أوفر بطول الإعلان، وتسمعه بصوت عربي.'],
-  ['النمو', 'السوشال', 'منشور واحد لكذا منصة، بجدولة وموافقة.'],
-  ['النمو', 'الرحلات والرسائل', 'رحلات واتساب وإيميل تمشي لحالها.'],
-  ['النمو', 'المحتوى و SEO', 'يحلل موقعك ويبني خطة، وتوافق على كل بند.'],
+  ['يبني', 'احلم', 'تكتب فكرة حملة، ويطلع لك الاستراتيجية والجمهور والميزانية والنصوص والتصاميم والموشن والفويس أوفر. وينشرها في المنصات موقوفة.'],
+  ['يقيس', 'التحليلات', 'القمع كامل، ومع كل رقم سطر يقول ليش تغيّر.'],
+  ['يقرر', 'الميديا باير', 'توصيات بسببها ومخاطرتها وكيف نقيس نجاحها، ويتعلم من نتيجة كل قرار.'],
+  ['ينشر', 'السوشال', 'منشور واحد لكذا منصة، بجدولة وموافقة.'],
+  ['يراقب', 'الرصد', 'وش ينقال عنك وعن منافسينك، وهل الكلام إيجابي ولا سلبي.'],
+  ['يصمم', 'التصميم', 'صورة منتجك في مشهد جديد، بكل المقاسات، والنص طبقة فوقها.'],
+  ['يتكلم', 'الصوت', 'فويس أوفر بلهجة نجدية بطول إعلانك، تسمعه وتنزله.'],
+];
+
+const OUTCOMES = [
+  ['قبل', 'كل صباح تجمع الأرقام من خمس منصات، وتخمّن وش تسوي.'],
+  ['بعد', 'تفتح اللوحة وتلقى الأرقام وسببها، والقرار جاهز ينتظر موافقتك.'],
+  ['قبل', 'الحملة الجديدة تاخذ أسبوع بين البريف والتصاميم والنصوص.'],
+  ['بعد', 'تكتب الفكرة في احلم، وتطلع المسودة كاملة تعدّلها وتعتمدها.'],
 ];
 
 const RULES = [
@@ -39,10 +54,11 @@ const RULES = [
 ];
 
 const FAQ = [
-  ['هل يتنفّذ شي بدون موافقتي؟', 'لا في وضع الموافقة. كل اقتراح يوصلك مع أرقامه وسبب المراجع، وما يتحرك إلا بعد ما توافق. وتقدر تخلي إيجنت معيّن يمشي تلقائيًا داخل حدود تحددها أنت.'],
+  ['هل يتنفّذ شي بدون موافقتي؟', 'لا في وضع الموافقة. كل اقتراح يوصلك مع أرقامه وسببه ومخاطرته، وما يتحرك إلا بعد ما توافق. وتقدر تخلي إيجنت معيّن يمشي تلقائيًا داخل حدود تحددها أنت.'],
+  ['احلم ينشر الحملة على طول؟', 'لا. ينشئ الحملة في المنصات موقوفة، وما تشتغل إلا لما تشغّلها أنت من المنصة. وقبل الإنشاء يعرض لك كل شي بينشأ.'],
   ['وش المنصات اللي يقرا منها؟', 'Meta وGoogle Ads وSnapchat وTikTok وGA4، مع X وPinterest وReddit وSearch Console. كل ربط يتم بتسجيل الدخول في المنصة نفسها.'],
   ['وين تنحفظ بياناتي؟', 'بيانات كل شركة معزولة عن غيرها، ومفاتيح الربط محفوظة في خزنة مشفّرة. وتقدر تفك أي ربط بضغطة وتنمسح مفاتيحه.'],
-  ['هل يغني عن فريق التسويق؟', 'لا. يختصر على فريقك جمع الأرقام والمتابعة اليومية، ويخلي وقتهم للقرار والإبداع. القرار الأخير دايم عند شخص.'],
+  ['هل يغني عن فريق التسويق؟', 'لا. يختصر على فريقك جمع الأرقام والمتابعة اليومية وتجهيز المواد، ويخلي وقتهم للقرار والإبداع. القرار الأخير دايم عند شخص.'],
 ];
 ---
 <!doctype html>
@@ -52,29 +68,41 @@ const FAQ = [
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="index,follow">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#040C20">
-<title>Apipeline · لوحة التسويق</title>
-<meta name="description" content="أرقام كل منصات إعلاناتك في لوحة وحدة، وإيجنتس تقترح وتنفّذ بعد موافقتك.">
+<meta name="theme-color" content="#ECEBE8">
+<title>Apipeline · نظام إيجنتس لإعلاناتك</title>
+<meta name="description" content="نظام إيجنتس يدير إعلاناتك: يحلل، ويقرر، ويشرح ليش، وأنت تعتمد. جرّب الديمو.">
 <link rel="preload" href="/assets/fonts/thmanyahserifdisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/playfair-display-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/app.css">
 <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body class="st st-night">
+<body class="st st-night st-warm">
 
 <SiteHeader current="/" cta={{ href: '#request', label: 'تواصل معنا' }} />
 
 <main>
-  <CineHero label="Apipeline" chapters={[0, 1, 3].map(i => { const [kick, title, text] = STEPS[i]!; return { kick: kick!, title: title!, text: text! }; })} finale="دورة وحدة تمشي كل ساعة">
-      <p class="st-eyebrow">لوحة تسويق بإيجنتس، والقرار الأخير لك</p>
-      <h1 class="st-h1">الأرقام تتكلم. <em>والقرار لك.</em></h1>
-      <p class="st-lead">Apipeline يجمع أرقام منصاتك كل ساعة، ويقترح وش توقف ووش ترفع، ويفحص المراجع كل اقتراح على قواعدك قبل ما يوصلك. توافق، ويتنفّذ بأمان.</p>
+  <OrbHero>
+      <p class="st-eyebrow">نظام إيجنتس يدير إعلاناتك</p>
+      <h1 class="st-h1">يقرر، ويشرح ليش. <em>وأنت تعتمد.</em></h1>
+      <p class="st-lead">Apipeline يجمع أرقام منصاتك ومبيعاتك كل ساعة، ويجهز الحملة من فكرة، ويقترح وش توقف ووش ترفع مع السبب والمخاطرة. توافق، ويتنفّذ ويتسجّل.</p>
       <div class="st-cta">
-        <a class="btn primary" href="#request" data-kind="board">اطلب تجربة</a>
-        <a class="btn secondary" href="#how">كيف يشتغل</a>
+        <a class="btn primary" href="#demo">جرّب الديمو</a>
+        <a class="btn secondary" href="#request" data-kind="board">اطلب تجربة على أرقامك</a>
       </div>
       <p class="st-note">الأرقام في الأمثلة بيانات تجريبية.</p>
-  </CineHero>
+  </OrbHero>
+
+  <PillCards
+    label="خطوات القصة"
+    rows={PILL_ROWS}
+    steps={[
+      { kick: 'كل شي في مكان واحد', title: 'سبعة إيجنتس على نفس الأرقام', text: 'كل منصة وكل رقم وكل خطوة في لوحة وحدة، وتتحدّث كل ساعة.' },
+      { kick: 'الحساب الصاحي', title: 'كل إعلان في مكانه', text: 'الصرف رايح للي يجيب نتيجة، وكل رقم معه سببه.' },
+      { kick: 'لما يتلخبط شي', title: 'يلقطه الإيجنت، ويرجّعه بموافقتك', text: 'إعلان يصرف بلا طلب، أو كرييتف تعب منه الجمهور: يوصلك الاقتراح مع السبب، تعتمد، ويرجع كل شي لمكانه.', list: PILL_DRIFT },
+    ]}
+    drift={PILL_DRIFT}
+    fixed="رجّعها الإيجنت بموافقتك"
+  />
 
   <section class="st-sec st-demo">
     <div class="st-wrap st-demo-in">
@@ -119,6 +147,20 @@ const FAQ = [
     </div>
   </section>
 
+  <section class="st-sec" id="outcome" style="padding-top:0">
+    <div class="st-wrap">
+      <header class="st-head" data-reveal>
+        <span class="kick">وش يتغيّر</span>
+        <h2>من الرقم للقرار، بدون ما تطارد أحد</h2>
+      </header>
+      <div class="st-grid four">
+        {OUTCOMES.map(([t, d]) => <article class="st-tile" data-reveal><h3>{t}</h3><p>{d}</p></article>)}
+      </div>
+    </div>
+  </section>
+
+  <DemoLab />
+
   <section class="st-sec" id="how" style="padding-top:0">
     <div class="st-wrap">
       <header class="st-head" data-reveal>
@@ -135,15 +177,14 @@ const FAQ = [
             </ul>
           </div>
           <div class="st-panel">
+            <span class="k" style="color:var(--accent);font:500 12px/1 var(--f-ar)">العائد على الصرف</span>
+            <h3 style="font:700 20px/1.5 var(--f-ar);margin:0">٣٫٤× <small style="font-size:14px;color:var(--muted)">▲ ١٢٪</small></h3>
+            <p style="margin:0;color:var(--muted);font:400 15px/1.8 var(--f-text)">أكبر زيادة من TikTok: مبيعات أكثر بنفس الصرف.</p>
+          </div>
+          <div class="st-panel">
             <span class="k" style="color:var(--accent);font:500 12px/1 var(--f-ar)">اقتراح · Meta</span>
             <h3 style="font:700 20px/1.5 var(--f-ar);margin:0">إيقاف إعلان يصرف ٣ أيام بدون ولا ليد</h3>
             <dl class="st-stats"><div><dt>الصرف</dt><dd>٨٤٠ ر.س</dd></div><div><dt>الليدز</dt><dd>٠</dd></div><div><dt>نسبة النقر</dt><dd>٠٫٤٪</dd></div></dl>
-          </div>
-          <div class="st-panel">
-            <ul>
-              <li>داخل حملة تجربة<b>✓</b></li><li>داخل حدود الميزانية<b>✓</b></li><li>مطابق لقواعد المنصة<b>✓</b></li><li>بدون كلمات ممنوعة<b>✓</b></li>
-            </ul>
-            <span class="st-chip ok">اجتاز المراجعة</span>
           </div>
           <div class="st-panel">
             <span class="st-chip">بانتظار موافقتك</span>
@@ -151,8 +192,8 @@ const FAQ = [
             <div class="st-acts"><span class="btn primary">موافقة</span><span class="btn secondary">تعديل</span><span class="btn ghost">رفض</span></div>
           </div>
           <div class="st-panel">
-            <span class="big">درس محفوظ</span>
-            <p style="margin:0;color:var(--muted);font:400 16px/1.8 var(--f-text)">بعد التنفيذ يقيس الأثر ويحفظ النتيجة، عشان الاقتراح الجاي يبدأ من اللي تعلّمه.</p>
+            <span class="st-chip ok">تنفّذ · في السجل</span>
+            <ul><li>إيقاف إعلان · Meta<b>١٢:٠٤</b></li><li>قياس بعد ٣ أيام<b>⏳</b></li><li>درس محفوظ<b>✓</b></li></ul>
           </div>
         </div>
         <div class="st-steps-list">
@@ -170,8 +211,8 @@ const FAQ = [
       <div class="st-wrap">
         <header class="st-head">
           <span class="kick">الإيجنتس</span>
-          <h2>تسع تابات، كل وحدة إيجنت بشغلة واضحة</h2>
-          <p>كلها تصب في لوحة القرارات نفسها، والمدير يديرها.</p>
+          <h2>سبعة إيجنتس، كل واحد بشغلة واضحة</h2>
+          <p>كلها تشتغل على نفس الأرقام، وكلها تنتظر موافقتك.</p>
         </header>
       </div>
       <div class="st-track" data-track>
@@ -185,7 +226,7 @@ const FAQ = [
       <header class="st-head" data-reveal>
         <span class="kick">الأمان</span>
         <h2>قواعد ما تنكسر</h2>
-        <p>النظام يقترح وينفّذ، بس داخل حدود أنت ترسمها.</p>
+        <p>النظام يقترح وينفّذ، بس داخل حدود أنت ترسمها. <a href="/security/">كيف نفحص الأمن</a></p>
       </header>
       <div class="st-grid four">
         {RULES.map(([t, d, p]) => <article class="st-tile" data-reveal><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={p}/></svg></span><h3>{t}</h3><p>{d}</p></article>)}
@@ -227,9 +268,9 @@ const FAQ = [
   <RequestForm kind="board" title="اربط حساباتك وخل الأرقام تتكلم" lead="اكتب لنا وش عندك من منصات وإنفاق، ونجهّز لك تجربة على أرقامك. كل ربط بتسجيل دخول المنصة نفسها، بدون ملفات تصدير وبدون لصق مفاتيح." />
 </main>
 
-<SiteFooter line="الأرقام تتكلم. والقرار لك." />
+<SiteFooter video={false} line="الأرقام تتكلم. والقرار لك." />
 
 <script is:inline type="module" src="/assets/welcome.js"></script>
-<script>import '../lib/scroll-story'; import '../lib/cine'; import '../lib/request-form';</script>
+<script>import '../lib/scroll-story'; import '../lib/orb'; import '../lib/pill-cards'; import '../lib/request-form'; import '../lib/demo';</script>
 </body>
 </html>
