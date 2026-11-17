@@ -5,7 +5,7 @@
 | الصفحة | الرابط | الملف |
 |---|---|---|
 | الرئيسية (لوحة القرارات) | `/` | `src/components/LandingPage.astro` |
-| الأمن السيبراني (موقع مستقل) | https://apipeline-security.leen-b9b.workers.dev | `src/components/SecurityPage.astro` (`npm run build:security` ثم `wrangler deploy --env security`) |
+| الأمن السيبراني (موقع مستقل) | https://apipeline-security.leen-b9b.workers.dev | `src/components/SecurityPage.astro` (`npm run build:security` ثم `wrangler deploy --env security`. البيئة تنحدد وقت البناء، فلازم كل موقع ينبني بأمره قبل نشره) |
 | بروفايل الشركة (يطبع PDF) | `/profile/` | `src/pages/profile/index.astro` |
 | صندوق الطلبات (بكلمة سر) | `/inbox/` | `src/pages/inbox/index.astro` |
 
