@@ -465,7 +465,7 @@
   --tint:color-mix(in srgb,#C8893F 8%,transparent);
   --tint-2:color-mix(in srgb,#C8893F 14%,transparent);
   --focus:color-mix(in srgb,#C8893F 40%,transparent);
-  --f-display:"Majalla Head","Inter","General Sans","Thmanyah Sans",system-ui,sans-serif;
+  --f-display:"Majalla Local","Naskh Web","Inter","General Sans","Thmanyah Sans",system-ui,sans-serif;
   --glass:radial-gradient(120% 70% at 50% 125%,rgba(226,176,114,.30),rgba(200,137,63,.08) 45%,transparent 70%),linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
   --glass-edge:inset 0 0 0 1px rgba(255,255,255,.7),inset 0 -1px 0 rgba(26,26,26,.05),0 24px 60px -18px rgba(60,44,28,.18);
   --shadow-lg:0 30px 70px -20px rgba(60,44,28,.22);
@@ -531,10 +531,10 @@
 .st-warm .dm-msg.me{background:var(--ink);color:#F2F1EE}
 
 /* ---- orb hero (src/components/OrbHero.astro, src/lib/orb.ts) */
-.orb-hero{position:relative;margin-top:-68px;padding:clamp(104px,14vh,150px) 0 clamp(48px,8vh,96px);overflow:clip;isolation:isolate;
+.orb-hero{position:relative;margin-top:-68px;padding:clamp(84px,10vh,112px) 0 clamp(40px,6vh,72px);overflow:clip;isolation:isolate;
   background:radial-gradient(60% 50% at 50% 30%,#F4F3F0,transparent 75%)}
 .orb-in{display:grid;justify-items:center;text-align:center}
-.orb{--size:clamp(260px,40vw,520px);--mx:0px;--my:0px;position:relative;width:var(--size);aspect-ratio:1;margin-bottom:calc(var(--size) * -.12);
+.orb{--size:clamp(200px,min(30vw,38vh),400px);--mx:0px;--my:0px;position:relative;width:var(--size);aspect-ratio:1;margin-bottom:calc(var(--size) * -.16);
   translate:var(--mx) var(--my);animation:orbBreathe 9s ease-in-out infinite}
 .orb-halo{position:absolute;inset:-14%;border-radius:50%;background:radial-gradient(closest-side at 72% 50%,rgba(185,182,242,.75),rgba(185,182,242,.25) 55%,transparent 80%);filter:blur(34px)}
 .orb-ball{position:absolute;inset:0;border-radius:50%;overflow:hidden;filter:blur(18px) saturate(115%)}
@@ -646,9 +646,10 @@ html.st-static .st-warm::after{animation:none}
   .st-foot .st-wrap{grid-template-columns:1fr;align-items:start}
 }
 
-/* ==== Headings in Sakkal Majalla (Leen's choice). The font is a Microsoft font whose licence forbids serving it as a
-   web font, so it is never shipped with the site: local() picks it up where it is installed (Windows, Office), and
-   everyone else gets Thmanyah Display. Majalla draws small, hence size-adjust. */
-@font-face{font-family:"Majalla Head";src:local("Sakkal Majalla"),local("SakkalMajalla");font-weight:400;size-adjust:128%;font-display:swap}
-@font-face{font-family:"Majalla Head";src:local("Sakkal Majalla Bold"),local("SakkalMajalla-Bold"),local("Sakkal Majalla");font-weight:700 900;size-adjust:128%;font-display:swap}
-:root{--f-display:"Majalla Head","Thmanyah Display","Thmanyah Sans",serif}
+/* ==== Headings in Sakkal Majalla where the visitor has it (its Microsoft licence forbids serving it as a web font),
+   otherwise Noto Naskh Arabic (SIL OFL, self-hosted, licence in /assets/fonts), the closest free Naskh. */
+@font-face{font-family:"Majalla Local";src:local("Sakkal Majalla"),local("SakkalMajalla");font-weight:400;size-adjust:128%;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:"Majalla Local";src:local("Sakkal Majalla Bold"),local("SakkalMajalla-Bold");font-weight:700 900;size-adjust:128%;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:"Naskh Web";src:url(/assets/fonts/noto-naskh-arabic-400.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:"Naskh Web";src:url(/assets/fonts/noto-naskh-arabic-700.woff2) format("woff2");font-weight:700 900;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+:root{--f-display:"Majalla Local","Naskh Web","Thmanyah Display","Thmanyah Sans",serif}
