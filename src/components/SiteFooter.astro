@@ -1,7 +1,7 @@
 ---
 // Footer for every page. The hero video plays again behind it (cinematic-web-builder, phase 7): muted, no overlay,
 // only a fade at the top edge into the page colour; it waits off screen (preload="none") until the page reaches it.
-import { NAV, CONTACT, wa } from '../lib/public-site';
+import { NAV, CONTACT, wa, SITE_MODE } from '../lib/public-site';
 interface Props { line?: string; video?: boolean; cta?: string }  // video={false}: no video, a warm colour field instead (the landing)
 const { line, video = true, cta } = Astro.props;
 ---
@@ -16,7 +16,7 @@ const { line, video = true, cta } = Astro.props;
     <div class="st-wrap">
       <div>
         <span class="mark">Apipeline</span>
-        <p>شركة سعودية تبني لوحة قرارات تسويقية، وتفحص أمن الأكواد والمواقع والتطبيقات.</p>
+        <p>{SITE_MODE === 'security' ? 'نفحص أمن الأكواد والمواقع والتطبيقات، ونسلّمك كل ثغرة بدليلها وطريقة إصلاحها.' : 'شركة تقنية سعودية تبني لوحة قرارات تسويقية يديرها وكلاء أذكياء.'}</p>
       </div>
       <nav aria-label="روابط">
         {NAV.map(n => <a href={n.href}>{n.label}</a>)}

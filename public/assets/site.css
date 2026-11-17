@@ -650,3 +650,54 @@ html.st-static .st-warm::after{animation:none}
    Arabic only: Latin in headings keeps the existing fonts. */
 @font-face{font-family:"Milan Display";src:url(/assets/fonts/MilanDisplay-Black.otf) format("opentype");font-weight:100 900;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
 :root{--f-display:"Milan Display","Thmanyah Display","Thmanyah Sans",serif}
+
+/* ==== How-it-works panels: the card is as tall as its content (all panels share one grid cell), not a fixed
+   520px box with a little content floating in the middle */
+@media (min-width:961px){
+  .st-steps-visual{display:grid;height:auto;top:clamp(96px,18vh,180px)}
+  .st-panel{position:relative;inset:auto;grid-area:1/1;align-self:start;justify-content:flex-start;padding:28px 28px 30px;min-height:0}
+  .st-step{min-height:46vh}
+}
+
+/* ==== Demo analytics: platforms and creatives */
+.dm-plat{display:grid;gap:10px}
+.dm-plat-row{display:grid;grid-template-columns:76px 1fr auto auto;gap:10px;align-items:center;font:400 13px/1.3 var(--f-ar)}
+.dm-plat-row b{font:600 13px/1 var(--f-num)}
+.dm-plat-row .bar{height:8px;border-radius:99px;background:rgba(26,26,26,.07);overflow:hidden}
+.dm-plat-row .bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#EE5A2C,#E2B072)}
+.dm-plat-row .v{font:500 13px/1 var(--f-num);color:var(--muted)}
+.dm-plat-row .r{font:600 13px/1 var(--f-num);min-width:42px;text-align:end}
+.dm-cr-head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin:0 0 12px}
+.dm-cr-head figcaption{margin:0}
+.dm-cr-head .seg button{min-height:40px;padding:0 14px}
+.dm-cr-insight{display:grid;gap:8px;margin:0 0 14px}
+.dm-cr-insight p{margin:0;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.6);font:400 14px/1.7 var(--f-ar)}
+.dm-cr-insight .st-chip{margin-inline-end:6px}
+.dm-cr-list{display:grid;gap:8px}
+.dm-cr-row{display:grid;grid-template-columns:56px minmax(150px,1.1fr) minmax(0,3fr) 96px 112px;gap:14px;align-items:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.55)}
+.dm-thumb{width:56px;height:56px;display:grid;place-items:center;border-radius:12px;background:rgba(26,26,26,.05)}
+.dm-thumb>span{height:48px;max-width:52px;display:grid;place-items:center;border-radius:8px;
+  background:linear-gradient(160deg,hsl(var(--h) 75% 72%),hsl(calc(var(--h) + 30) 70% 45%));box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.dm-thumb i{font:600 9px/1 var(--f-ar);font-style:normal;color:#fff;background:rgba(0,0,0,.28);padding:3px 5px;border-radius:5px}
+.dm-cr-name{display:grid;gap:6px;justify-items:start}
+.dm-cr-name b{font:600 14px/1.4 var(--f-ar)}
+.dm-cr-m{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:0}
+.dm-cr-m div{display:grid;gap:3px}
+.dm-cr-m dt{font:400 11px/1.3 var(--f-ar);color:var(--muted)}
+.dm-cr-m dd{margin:0;font:600 14px/1 var(--f-num)}
+.dm-cr-trend{display:grid;gap:4px}.dm-cr-trend .l{font:400 11px/1 var(--f-ar);color:var(--muted)}
+.dm-spark{width:80px;height:24px}
+.dm-spark polyline{fill:none;stroke:#3E9A63;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dm-spark.down polyline{stroke:#B3261E}
+.dm-cr-st{justify-self:end}
+@media (max-width:1100px){
+  .dm-cr-row{grid-template-columns:56px 1fr auto;grid-template-areas:"t n s" "m m m" "g g g"}
+  .dm-thumb{grid-area:t}.dm-cr-name{grid-area:n}.dm-cr-st{grid-area:s}.dm-cr-m{grid-area:m;grid-template-columns:repeat(3,minmax(0,1fr))}.dm-cr-trend{grid-area:g;grid-template-columns:auto 1fr;align-items:center}
+}
+
+/* ==== Audit pass: the page links stay reachable on phones; the scroll bar under the header reads as progress */
+@media (max-width:640px){
+  .st-top nav{display:flex;gap:14px;font-size:13px;margin-inline-start:auto}
+  .st-top .mark{font-size:22px}
+}
+.st-warm .st-progress{background:#EE5A2C;height:2px}

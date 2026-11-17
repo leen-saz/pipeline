@@ -170,13 +170,13 @@ function dream() {
   });
 
   pub.addEventListener('click', () => {
-    $('#dmConfirmList')!.innerHTML = plan.budget.map(([p, v]) => `<li><b>${p}</b> <span>حملة واحدة، ٣ إعلانات، ميزانية يومية</span> <span>${ar(5 * v)}</span> <span>ر.س</span> <span class="st-chip">موقوفة</span></li>`).join('');
+    $('#dmConfirmList')!.innerHTML = plan.budget.map(([p, v]) => `<li><b>${p}</b> <span>حملة واحدة، ٣ إعلانات، ميزانية يومية</span> <span>${ar(5 * v)}</span> <span>ر.س</span> <span class="st-chip">جاهزة للنشر</span></li>`).join('');
     dlg.showModal();
   });
   $('#dmConfirmNo')!.addEventListener('click', () => dlg.close());
   $('#dmConfirmOk')!.addEventListener('click', () => {
     dlg.close();
-    chat.insertAdjacentHTML('beforeend', '<p class="dm-msg bot">تم في العرض التجريبي: الحملات جاهزة وموقوفة. في النظام الفعلي تجدها في كل منصة، وتشغّلها بنفسك.</p>');
+    chat.insertAdjacentHTML('beforeend', '<p class="dm-msg bot">تم في العرض التجريبي: في النظام الفعلي تُنشر الحملات الآن في كل منصة.</p>');
     pub.disabled = true; pub.textContent = 'نُشرت (عرض تجريبي)';
   });
 }
@@ -279,6 +279,48 @@ function drawFunnel(svg: SVGSVGElement, v: number[], spend: number) {
   });
 }
 
+// ---------------------------------------------------------------- تحليل المواد الإعلانية
+// Each creative: its share of spend, CTR, 3-second view rate (video only), return, frequency, and how much its CTR is
+// fading (the audience has had enough of it). Cost per order follows from return: average order ÷ ROAS.
+type Creative = { name: string; fmt: string; ratio: string; plat: string; share: number; ctr: number; hook: number | null; roas: number; freq: number; fade: number; hue: number };
+const CREATIVES: Creative[] = [
+  { name: 'فيديو قصير: روتين الصباح', fmt: 'فيديو', ratio: '9/16', plat: 'TikTok', share: .26, ctr: 1.9, hook: 38, roas: 4.6, freq: 1.8, fade: 0, hue: 24 },
+  { name: 'إعلان بحث: أدوات المطبخ', fmt: 'نص', ratio: '16/9', plat: 'Google', share: .12, ctr: 4.2, hook: null, roas: 3.9, freq: 1.2, fade: 0, hue: 210 },
+  { name: 'قصة: قبل وبعد', fmt: 'قصة', ratio: '9/16', plat: 'Snapchat', share: .18, ctr: 1.4, hook: 31, roas: 3.7, freq: 2.1, fade: 0, hue: 48 },
+  { name: 'دوّار: ثلاث مزايا للمنتج', fmt: 'دوّار', ratio: '1/1', plat: 'Meta', share: .14, ctr: 1.1, hook: null, roas: 3.1, freq: 2.4, fade: .1, hue: 330 },
+  { name: 'صورة المنتج على خلفية مكتبية', fmt: 'صورة', ratio: '1/1', plat: 'Meta', share: .20, ctr: .9, hook: null, roas: 2.6, freq: 3.4, fade: .3, hue: 190 },
+  { name: 'فيديو تجربة عميلة', fmt: 'فيديو', ratio: '4/5', plat: 'Meta', share: .10, ctr: .6, hook: 22, roas: 1.4, freq: 4.6, fade: .5, hue: 280 },
+];
+const ORDER_VALUE = 185;
+function creatives(spend: number, days: number, sort: 'roas' | 'cpa' | 'ctr') {
+  const list = $('#dmCr'), ins = $('#dmCrInsight'), plat = $('#dmPlat'); if (!list || !ins || !plat) return;
+  const rows = CREATIVES.map(c => ({ ...c, spend: spend * c.share, cpa: ORDER_VALUE / c.roas }))
+    .sort((a, b) => sort === 'cpa' ? a.cpa - b.cpa : b[sort] - a[sort]);
+  const spark = (c: Creative) => {
+    const n = Math.max(7, Math.min(days, 30));
+    const pts = Array.from({ length: n }, (_, i) => c.ctr * (1 + c.fade * (1 - (2 * i) / (n - 1))) * (1 + .05 * Math.sin(i * .45 + c.hue)));
+    const max = Math.max(...pts), min = Math.min(...pts);
+    return `<svg class="dm-spark${c.fade >= .3 ? ' down' : ''}" viewBox="0 0 80 24" aria-hidden="true"><polyline points="${pts.map((v, i) => `${(i * 80) / (n - 1)},${22 - ((v - min) / (max - min || 1)) * 20}`).join(' ')}"/></svg>`;
+  };
+  const status = (c: Creative) => c.freq >= 4 || c.fade >= .3 ? '<span class="st-chip hot">ملّه الجمهور</span>'
+    : c.roas >= 4 ? '<span class="st-chip ok">الأفضل أداءً</span>' : c.roas < 2 ? '<span class="st-chip hot">أقل من الهدف</span>' : '<span class="st-chip">مستقر</span>';
+  const m = (l: string, v: string) => `<div><dt>${l}</dt><dd>${v}</dd></div>`;
+  list.innerHTML = rows.map(c => `<article class="dm-cr-row">
+    <span class="dm-thumb" style="--h:${c.hue}" aria-hidden="true"><span style="aspect-ratio:${c.ratio}"><i>${c.fmt}</i></span></span>
+    <div class="dm-cr-name"><b>${esc(c.name)}</b><span class="st-chip">${c.plat}</span></div>
+    <dl class="dm-cr-m">${m('الإنفاق', `${ar(c.spend)} ر.س`)}${m('نسبة النقر', `${ar(c.ctr, 1)}٪`)}${m('مشاهدة أول ٣ ثوانٍ', c.hook == null ? '—' : `${ar(c.hook)}٪`)}${m('تكلفة الطلب', `${ar(c.cpa)} ر.س`)}${m('العائد', `${ar(c.roas, 1)}×`)}${m('التكرار', ar(c.freq, 1))}</dl>
+    <div class="dm-cr-trend"><span class="l">اتجاه نسبة النقر</span>${spark(c)}</div>
+    <div class="dm-cr-st">${status(c)}</div></article>`).join('');
+  const best = [...CREATIVES].sort((a, b) => b.roas - a.roas)[0]!, worst = [...CREATIVES].sort((a, b) => b.freq - a.freq)[0]!;
+  const drop = (100 * 2 * worst.fade) / (1 + worst.fade);
+  ins.innerHTML = `<p><span class="st-chip ok">الأفضل</span> <b>${esc(best.name)}</b> <span>بعائد</span> <b>${ar(best.roas, 1)}×</b> <span>وتكلفة طلب</span> <b>${ar(ORDER_VALUE / best.roas)} ر.س</b><span>. الاقتراح: رفع ميزانيته تدريجيًا.</span></p>
+    <p><span class="st-chip hot">يحتاج تجديدًا</span> <b>${esc(worst.name)}</b> <span>بتكرار</span> <b>${ar(worst.freq, 1)}</b><span>، وانخفضت نسبة النقر</span> <b>${ar(drop)}٪</b><span>. الاقتراح: نسختان جديدتان من «احلم» إلى جانبه.</span></p>`;
+  const by = new Map<string, { s: number; r: number }>();
+  for (const c of CREATIVES) { const x = by.get(c.plat) ?? { s: 0, r: 0 }; x.s += c.share; x.r += c.share * c.roas; by.set(c.plat, x); }
+  plat.innerHTML = [...by].sort((a, b) => b[1].s - a[1].s).map(([p, x]) => `<div class="dm-plat-row"><b>${p}</b><span class="bar"><i style="width:${(x.s * 100).toFixed(0)}%"></i></span><span class="v">${ar(spend * x.s)} ر.س</span><span class="r">${ar(x.r / x.s, 1)}×</span></div>`).join('')
+    + '<p class="dm-legend"><span>الشريط: حصة الإنفاق، والرقم الأخير: العائد</span></p>';
+}
+
 function analytics() {
   const kpis = $('#dmKpis'), funnel = $('#dmFunnel'), chart = $('#dmChart'), seg = $('#dmRange');
   if (!kpis || !funnel || !chart || !seg) return;
@@ -303,7 +345,14 @@ function analytics() {
     const W = 320, H = 140, P = 8, max = Math.max(...d.map(x => x.sales));
     const pts = (k: 'spend' | 'sales') => d.map((x, i) => `${P + (i * (W - 2 * P)) / Math.max(1, d.length - 1)},${H - P - ((H - 2 * P) * x[k]) / max}`).join(' ');
     chart.innerHTML = `<polyline class="ln a" points="${pts('sales')}"/><polyline class="ln b" points="${pts('spend')}"/>`;
+    cur = { spend, days }; creatives(spend, days, sortBy);
   };
+  let cur = { spend: 0, days: 30 }, sortBy: 'roas' | 'cpa' | 'ctr' = 'roas';
+  $('#dmCrSort')?.addEventListener('click', e => {
+    const b = (e.target as Element).closest<HTMLButtonElement>('[data-sort]'); if (!b) return;
+    $$('[data-sort]', $('#dmCrSort')!).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    sortBy = b.dataset.sort as typeof sortBy; creatives(cur.spend, cur.days, sortBy);
+  });
   seg.addEventListener('click', e => {
     const b = (e.target as Element).closest<HTMLButtonElement>('[data-days]'); if (!b) return;
     $$('[data-days]', seg).forEach(x => x.setAttribute('aria-pressed', String(x === b))); render(Number(b.dataset.days));
