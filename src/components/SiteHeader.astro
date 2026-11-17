@@ -6,7 +6,7 @@ const { current, cta, dark = false } = Astro.props;
 ---
 <header class:list={['st-top', { dark }]}>
   <div class="st-wrap">
-    <a class="mark" href="/" aria-label="Apipeline">Apipeline<i>.</i></a>
+    <a class="mark" href="/" aria-label="Apipeline">Apipeline</a>
     <nav aria-label="صفحات Apipeline">
       {NAV.map(n => <a href={n.href} aria-current={n.href === current ? 'page' : undefined}>{n.label}</a>)}
     </nav>

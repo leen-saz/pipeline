@@ -37,28 +37,28 @@ interface Plan { strategy: [string, string]; audience: string[]; budget: [string
 
 const PLANS: Record<string, Plan> = {
   skin: {
-    strategy: ['نبدأ بأسبوع تعريف بالمنتج على تيك توك وسناب، وبعدها إعادة استهداف لمن شاف الفيديو على ميتا.', 'نركّز الأسبوع الأول على الفيديو القصير، ونحوّل الميزانية للإعلان اللي تكلفة بيعته أقل.'],
+    strategy: ['نبدأ بأسبوع تعريفي بالمنتج على TikTok وSnapchat، ثم نعيد استهداف من شاهد الفيديو على Meta.', 'نركّز في الأسبوع الأول على الفيديو القصير، ونحوّل الميزانية إلى الإعلان الأقل تكلفة للبيع.'],
     audience: ['نساء ١٨–٣٤', 'مهتمات بالعناية بالبشرة', 'الرياض وجدة', 'زوار الموقع آخر ٣٠ يوم'],
     budget: [['TikTok', 35], ['Snapchat', 30], ['Meta', 25], ['Google', 10]],
-    copy: ['بشرتك تستاهل روتين بسيط. جرّبيه أسبوع وشوفي الفرق بنفسك.', 'جديدنا وصل: ترطيب يدوم طول اليوم، ومكوّنات واضحة.', 'روتينك الصباحي في دقيقتين. اطلبيه الحين والتوصيل سريع.'],
-    head: 'روتين بسيط، ترطيب يدوم',
-    vo: ['صباحك زحمة؟ روتينك ما يحتاج يكون كذا. خطوة وحدة، ترطيب يدوم طول اليوم. اطلبيه الحين.', 'خطوة وحدة الصبح، وبشرتك مرتاحة لين الليل. جديدنا وصل، اطلبيه الحين.'],
+    copy: ['بشرتك تستحق روتينًا بسيطًا. جرّبيه أسبوعًا ولاحظي الفرق.', 'منتجنا الجديد: ترطيب يدوم طوال اليوم، ومكوّنات واضحة.', 'روتينك الصباحي في دقيقتين. اطلبيه الآن بتوصيل سريع.'],
+    head: 'روتين بسيط وترطيب يدوم',
+    vo: ['صباحك مزدحم؟ روتينك لا يلزم أن يكون كذلك. خطوة واحدة وترطيب يدوم طوال اليوم. اطلبيه الآن.', 'خطوة واحدة صباحًا، وبشرتك مرتاحة حتى المساء. منتجنا الجديد متوفر الآن.'],
   },
   home: {
-    strategy: ['نبدأ بإعلانات بحث في قوقل لمن يدوّر على أدوات المطبخ، ونعيد استهداف زوار المتجر على ميتا بالعرض.', 'آخر ثلاث أيام من العرض نرفع الميزانية على الإعلانات اللي العائد فيها فوق الهدف.'],
-    audience: ['رجال ونساء ٢٥–٤٥', 'مهتمين بالطبخ والبيت', 'كل المملكة', 'من أضاف للسلة ولا اشترى'],
+    strategy: ['نبدأ بإعلانات بحث في Google لمن يبحث عن أدوات المطبخ، ونعيد استهداف زوار المتجر على Meta بالعرض.', 'في آخر ثلاثة أيام من العرض نرفع ميزانية الإعلانات التي يتجاوز عائدها الهدف.'],
+    audience: ['رجال ونساء ٢٥–٤٥', 'مهتمون بالطبخ والمنزل', 'كل المملكة', 'من أضاف إلى السلة ولم يشترِ'],
     budget: [['Google', 35], ['Meta', 35], ['Snapchat', 20], ['TikTok', 10]],
-    copy: ['العرض قرب يخلص: أدوات مطبخك بأسعار نهاية الموسم.', 'جهّز مطبخك للموسم الجاي، والتوصيل لين بابك.', 'شي في سلتك ينتظرك. كمّل طلبك قبل ما يخلص العرض.'],
+    copy: ['العرض يوشك على الانتهاء: أدوات مطبخك بأسعار نهاية الموسم.', 'جهّز مطبخك للموسم القادم، والتوصيل حتى بابك.', 'منتج في سلتك بانتظارك. أكمل طلبك قبل انتهاء العرض.'],
     head: 'عرض نهاية الموسم',
-    vo: ['مطبخك يستاهل تجديد. عرض نهاية الموسم على أدوات المطبخ، لين نهاية الأسبوع بس.', 'العرض قرب يخلص. جدّد أدوات مطبخك، والتوصيل لين بابك.'],
+    vo: ['مطبخك يستحق التجديد. عرض نهاية الموسم على أدوات المطبخ حتى نهاية الأسبوع فقط.', 'العرض يوشك على الانتهاء. جدّد أدوات مطبخك، والتوصيل حتى بابك.'],
   },
   clinic: {
-    strategy: ['نبدأ بنماذج حجز على سناب وميتا، ونتابع كل حجز في نظام العملاء عشان نعرف أي إعلان يجيب حجز مدفوع.', 'نوقف أي إعلان يصرف ثلاث أيام بدون حجز، ونرفع اللي تكلفة حجزه تحت الهدف.'],
-    audience: ['رجال ونساء ٢٥–٥٥', 'عائلات في الرياض', 'مهتمين بالصحة والعافية', 'من زار صفحة الخدمات'],
+    strategy: ['نبدأ بنماذج حجز على Snapchat وMeta، ونتابع كل حجز في نظام العملاء لنعرف أي إعلان يحقق حجوزات مدفوعة.', 'نوقف أي إعلان ينفق ثلاثة أيام دون حجز، ونرفع ميزانية الإعلان الذي تقل تكلفة حجزه عن الهدف.'],
+    audience: ['رجال ونساء ٢٥–٥٥', 'عائلات في الرياض', 'مهتمون بالصحة والعافية', 'من زار صفحة الخدمات'],
     budget: [['Snapchat', 40], ['Meta', 35], ['Google', 15], ['TikTok', 10]],
-    copy: ['فريقنا الطبي المرخّص يجيك البيت، وتحجز موعدك بدقيقة.', 'تقييم طبي في بيتك بالوقت اللي يناسبك.', 'احجز جلستك اليوم، ومتابعة من فريق مختص.'],
-    head: 'رعايتك في بيتك',
-    vo: ['موعدك الطبي يجيك البيت. فريق مرخّص، وحجز بدقيقة، وبالوقت اللي يناسبك.', 'لا زحمة ولا انتظار. فريقنا الطبي يجيك البيت. احجز موعدك اليوم.'],
+    copy: ['فريقنا الطبي المرخّص يزورك في منزلك، واحجز موعدك في دقيقة.', 'تقييم طبي في منزلك في الوقت الذي يناسبك.', 'احجز جلستك اليوم، مع متابعة من فريق مختص.'],
+    head: 'رعايتك في منزلك',
+    vo: ['موعدك الطبي في منزلك: فريق مرخّص، وحجز في دقيقة، وفي الوقت الذي يناسبك.', 'لا زحام ولا انتظار. فريقنا الطبي يزورك في منزلك. احجز موعدك اليوم.'],
   },
 };
 const ideaKey = (text: string): string => {
@@ -68,9 +68,9 @@ const ideaKey = (text: string): string => {
   if (/عياد|صح|طب|جلس|حجز|clinic|health/i.test(t)) return 'clinic';
   return 'skin';
 };
-const SIZES: [string, number, number][] = [['مربع ١:١', 1080, 1080], ['ستوري ٩:١٦', 1080, 1920], ['عرضي ١٫٩:١', 1200, 628]];
+const SIZES: [string, number, number][] = [['مربع ١:١', 1080, 1080], ['قصة ٩:١٦', 1080, 1920], ['عرضي ١٫٩:١', 1200, 628]];
 
-const CANVAS_EN: Record<string, string> = { 'روتين بسيط، ترطيب يدوم': 'A simple routine, lasting hydration', 'عرض نهاية الموسم': 'End-of-season offer', 'رعايتك في بيتك': 'Care at your home', 'اطلب الحين': 'Order now' };
+const CANVAS_EN: Record<string, string> = { 'روتين بسيط وترطيب يدوم': 'A simple routine, lasting hydration', 'عرض نهاية الموسم': 'End-of-season offer', 'رعايتك في منزلك': 'Care at your home', 'اطلب الآن': 'Order now' };
 const tr = (s: string) => (document.documentElement.lang === 'en' ? CANVAS_EN[s] ?? s : s);
 function drawDesign(c: HTMLCanvasElement, w: number, h: number, head: string, cta: string, alt: boolean) {
   const s = 360 / Math.max(w, h); c.width = Math.round(w * s); c.height = Math.round(h * s);
@@ -105,12 +105,12 @@ function dream() {
   const parts = (): Part[] => [
     { key: 'strategy', title: 'الاستراتيجية', html: () => `<p>${esc(plan.strategy[0])}</p>`, alt: () => `<p>${esc(plan.strategy[1])}</p>` },
     { key: 'audience', title: 'الجمهور', html: () => `<div class="dm-chips">${plan.audience.map(a => `<span class="st-chip">${esc(a)}</span>`).join('')}</div>`,
-      alt: () => `<div class="dm-chips">${[...plan.audience.slice(0, 3), 'متابعين حساباتك'].map(a => `<span class="st-chip">${esc(a)}</span>`).join('')}</div>` },
+      alt: () => `<div class="dm-chips">${[...plan.audience.slice(0, 3), 'متابعو حساباتك'].map(a => `<span class="st-chip">${esc(a)}</span>`).join('')}</div>` },
     { key: 'budget', title: 'الميزانية لكل منصة', html: () => budget(plan.budget), alt: () => budget(plan.budget.map(([p, v], i) => [p, i === 0 ? v - 5 : i === 1 ? v + 5 : v])) },
     { key: 'copy', title: 'النصوص', html: () => `<ol class="dm-copy">${plan.copy.map(c => `<li>${esc(c)}</li>`).join('')}</ol>`,
       alt: () => `<ol class="dm-copy">${[...plan.copy].reverse().map(c => `<li>${esc(c)}</li>`).join('')}</ol>` },
     { key: 'design', title: 'التصاميم', html: () => designs(), alt: () => designs() },
-    { key: 'voice', title: 'الفويس أوفر', html: () => `<p class="dm-vo">«<span>${esc(plan.vo[0])}</span>»</p><p class="muted"><span>نجدي</span> · <span>٢٢</span> <span>ثانية تقريبًا</span></p>`,
+    { key: 'voice', title: 'التعليق الصوتي', html: () => `<p class="dm-vo">«<span>${esc(plan.vo[0])}</span>»</p><p class="muted"><span>نجدي</span> · <span>٢٢</span> <span>ثانية تقريبًا</span></p>`,
       alt: () => `<p class="dm-vo">«<span>${esc(plan.vo[1])}</span>»</p><p class="muted"><span>نجدي</span> · <span>١٨</span> <span>ثانية تقريبًا</span></p>` },
   ];
   const budget = (rows: [string, number][]) => `<p class="muted"><span>الميزانية اليومية:</span> <b>٥٠٠</b> <span>ر.س</span></p><ul class="dm-bars">${rows.map(([p, v]) =>
@@ -118,7 +118,7 @@ function dream() {
   const designs = () => `<div class="dm-designs">${SIZES.map(([l], i) => `<figure><canvas data-size="${i}" aria-label="${esc(l)}"></canvas><figcaption>${esc(l)}</figcaption></figure>`).join('')}</div>`;
 
   const paint = (card: HTMLElement) => {
-    $$<HTMLCanvasElement>('canvas[data-size]', card).forEach(c => { const [, w, h] = SIZES[Number(c.dataset.size)]!; drawDesign(c, w, h, tr(plan.head), tr('اطلب الحين'), alt.has('design')); });
+    $$<HTMLCanvasElement>('canvas[data-size]', card).forEach(c => { const [, w, h] = SIZES[Number(c.dataset.size)]!; drawDesign(c, w, h, tr(plan.head), tr('اطلب الآن'), alt.has('design')); });
   };
   const count = () => {
     $('#dmApproved')!.textContent = ar(approved.size);
@@ -126,12 +126,12 @@ function dream() {
   };
   const card = (p: Part) => `<article class="dm-part" data-part="${p.key}"><header><h4>${esc(p.title)}</h4><span class="dm-state" hidden>معتمد</span></header>
     <div class="dm-body">${alt.has(p.key) ? p.alt() : p.html()}</div>
-    <form class="dm-edit" hidden><label class="sr-only" for="ed-${p.key}">وش تبي تعدّل؟</label><input id="ed-${p.key}" type="text" maxlength="120" placeholder="وش تبي تعدّل؟"><button class="btn secondary" type="submit">أرسل التعديل</button></form>
+    <form class="dm-edit" hidden><label class="sr-only" for="ed-${p.key}">ما التعديل المطلوب؟</label><input id="ed-${p.key}" type="text" maxlength="120" placeholder="ما التعديل المطلوب؟"><button class="btn secondary" type="submit">أرسل التعديل</button></form>
     <div class="st-acts"><button type="button" class="btn ghost" data-act="edit">عدّل</button><button type="button" class="btn secondary" data-act="ok">اعتمد</button></div></article>`;
 
   async function start(text: string) {
     const me = ++run; plan = PLANS[ideaKey(text)]!; approved = new Set(); alt = new Set();
-    chat.innerHTML = `<p class="dm-msg me">${esc(text)}</p><p class="dm-msg bot" id="dmThink">أفكر في الحملة… أقرا أهدافك ونتائج حملاتك السابقة.</p>`;
+    chat.innerHTML = `<p class="dm-msg me">${esc(text)}</p><p class="dm-msg bot" id="dmThink">أعمل على الحملة… أراجع أهدافك ونتائج حملاتك السابقة.</p>`;
     draft.hidden = false; draft.innerHTML = ''; bar.hidden = true;
     await wait(700);
     for (const p of parts()) {
@@ -141,7 +141,7 @@ function dream() {
       await wait(380);
     }
     if (me !== run) return;
-    $('#dmThink')!.textContent = 'جهزت المسودة. راجع كل جزء: عدّله أو اعتمده، وبعدها انشر.';
+    $('#dmThink')!.textContent = 'المسودة جاهزة. راجع كل جزء فعدّله أو اعتمده، ثم انشر.';
     $('#dmTotal')!.textContent = ar(parts().length); bar.hidden = false; count();
   }
 
@@ -160,7 +160,7 @@ function dream() {
   draft.addEventListener('submit', async e => {
     e.preventDefault();
     const f = e.target as HTMLFormElement, el = f.closest<HTMLElement>('.dm-part')!, key = el.dataset.part!;
-    const want = $<HTMLInputElement>('input', f)!.value.trim() || 'خله أقصر';
+    const want = $<HTMLInputElement>('input', f)!.value.trim() || 'اجعله أقصر';
     chat.insertAdjacentHTML('beforeend', `<p class="dm-msg me">${esc(want)}</p><p class="dm-msg bot"><span>عدّلت</span> «<span>${esc(parts().find(p => p.key === key)!.title)}</span>». <span>راجعه.</span></p>`);
     alt.has(key) ? alt.delete(key) : alt.add(key); approved.delete(key);
     const p = parts().find(x => x.key === key)!;
@@ -170,14 +170,14 @@ function dream() {
   });
 
   pub.addEventListener('click', () => {
-    $('#dmConfirmList')!.innerHTML = plan.budget.map(([p, v]) => `<li><b>${p}</b> <span>حملة وحدة، ٣ إعلانات، ميزانية يومية</span> <span>${ar(5 * v)}</span> <span>ر.س</span> <span class="st-chip">موقوفة</span></li>`).join('');
+    $('#dmConfirmList')!.innerHTML = plan.budget.map(([p, v]) => `<li><b>${p}</b> <span>حملة واحدة، ٣ إعلانات، ميزانية يومية</span> <span>${ar(5 * v)}</span> <span>ر.س</span> <span class="st-chip">موقوفة</span></li>`).join('');
     dlg.showModal();
   });
   $('#dmConfirmNo')!.addEventListener('click', () => dlg.close());
   $('#dmConfirmOk')!.addEventListener('click', () => {
     dlg.close();
-    chat.insertAdjacentHTML('beforeend', '<p class="dm-msg bot">تم في الديمو: الحملات جاهزة وموقوفة. في النظام الحقيقي تلقاها في كل منصة، وتشغّلها أنت.</p>');
-    pub.disabled = true; pub.textContent = 'انتشرت (ديمو)';
+    chat.insertAdjacentHTML('beforeend', '<p class="dm-msg bot">تم في العرض التجريبي: الحملات جاهزة وموقوفة. في النظام الفعلي تجدها في كل منصة، وتشغّلها بنفسك.</p>');
+    pub.disabled = true; pub.textContent = 'نُشرت (عرض تجريبي)';
   });
 }
 
@@ -269,7 +269,7 @@ function drawFunnel(svg: SVGSVGElement, v: number[], spend: number) {
     const i = Number(k.slice(1));
     if (k[0] === 'l') {
       const ok = scores[i]! >= 1;
-      detail.innerHTML = `<b>${STAGES[i]} ← ${STAGES[i + 1]}</b> · ${RATE_L[i]}: <b>${ar(rates[i]! * 100, 1)}٪</b> · الهدف ${ar(TARGET[i]! * 100, 1)}٪ <span class="${ok ? 'ok' : 'bad'}">${ok ? 'فوق الهدف' : 'تحت الهدف، هنا أكبر تسرّب'}</span>`;
+      detail.innerHTML = `<b>${STAGES[i]} ← ${STAGES[i + 1]}</b> · ${RATE_L[i]}: <b>${ar(rates[i]! * 100, 1)}٪</b> · الهدف ${ar(TARGET[i]! * 100, 1)}٪ <span class="${ok ? 'ok' : 'bad'}">${ok ? 'فوق الهدف' : 'أقل من الهدف، وهنا أكبر تسرّب'}</span>`;
     } else detail.innerHTML = `<b>${ar(i + 1)}. ${STAGES[i]}</b> · ${ar(v[i]!)} · ${costs[i]![0]}: <b>${costs[i]![1]}</b>`;
   };
   svg.querySelectorAll<SVGGElement>('[data-k]').forEach(g => {
@@ -293,10 +293,10 @@ function analytics() {
       return `<div class="dm-kpi"><span class="l">${l}</span><b>${v}</b><span class="d ${good ? 'up' : 'down'}">${c >= 0 ? '▲' : '▼'} ${ar(Math.abs(c), 1)}٪</span><span class="why">${why}</span></div>`;
     };
     kpis.innerHTML = [
-      tile('الصرف', `${ar(spend)} <small>ر.س</small>`, chg(spend, pSpend), 'أكبر زيادة من TikTok'),
+      tile('الإنفاق', `${ar(spend)} <small>ر.س</small>`, chg(spend, pSpend), 'أكبر زيادة من TikTok'),
       tile('المبيعات', `${ar(sales)} <small>ر.س</small>`, chg(sales, pSales), 'أكبر زيادة من Meta'),
       tile('الطلبات', ar(orders), chg(orders, pOrders), 'متوسط الطلب ١٨٥ ر.س'),
-      tile('العائد على الصرف', `${ar(sales / spend, 2)}×`, chg(sales / spend, pSales / pSpend), 'المبيعات ÷ الصرف'),
+      tile('العائد على الإنفاق', `${ar(sales / spend, 2)}×`, chg(sales / spend, pSales / pSpend), 'المبيعات ÷ الإنفاق'),
     ].join('');
     const impr = spend * 210, clicks = Math.round(impr * .012), carts = Math.round(clicks * .09);
     drawFunnel(funnel as unknown as SVGSVGElement, [impr, clicks, carts, orders], spend);
@@ -313,15 +313,15 @@ function analytics() {
 
 // ---------------------------------------------------------------- الميديا باير
 const RECS = [
-  { t: 'إيقاف إعلان يصرف ٣ أيام بدون ولا طلب', plat: 'Meta', why: 'صرف ٨٤٠ ر.س، ونسبة النقر ٠٫٤٪، وصفر طلبات من ثلاث أيام.', risk: 'منخفض: الإعلان ما جاب نتيجة، وإيقافه يوفّر الصرف.', metric: 'تكلفة الطلب في الحملة بعد ٣ أيام' },
-  { t: 'رفع ميزانية مجموعة ٢٠٪', plat: 'TikTok', why: 'العائد على الصرف ٤٫٢× لمدة أسبوع، فوق هدفك ٣×.', risk: 'متوسط: الرفع الكبير يرجّع المنصة لمرحلة التعلم، فنرفع ٢٠٪ بس.', metric: 'العائد على الصرف يبقى فوق ٣× بعد ٧ أيام' },
-  { t: 'تجديد الكرييتف لإعلان تعب منه الجمهور', plat: 'Snapchat', why: 'نسبة النقر نزلت من ١٫٨٪ إلى ٠٫٩٪ خلال أسبوعين، والتكرار ٤٫٦.', risk: 'منخفض: نجرّب نسختين جديدة جنب القديمة.', metric: 'نسبة النقر ترجع فوق ١٫٥٪' },
+  { t: 'إيقاف إعلان أنفق ٣ أيام دون أي طلب', plat: 'Meta', why: 'أنفق ٨٤٠ ر.س بنسبة نقر ٠٫٤٪، ودون أي طلب خلال ثلاثة أيام.', risk: 'منخفضة: الإعلان لم يحقق نتيجة، وإيقافه يوفّر الإنفاق.', metric: 'تكلفة الطلب في الحملة بعد ٣ أيام' },
+  { t: 'رفع ميزانية مجموعة ٢٠٪', plat: 'TikTok', why: 'العائد على الإنفاق ٤٫٢× لمدة أسبوع، أعلى من هدفك ٣×.', risk: 'متوسطة: الرفع الكبير يعيد المنصة إلى مرحلة التعلّم، لذا نرفع ٢٠٪ فقط.', metric: 'بقاء العائد على الإنفاق فوق ٣× بعد ٧ أيام' },
+  { t: 'تجديد تصميم إعلان ملّه الجمهور', plat: 'Snapchat', why: 'انخفضت نسبة النقر من ١٫٨٪ إلى ٠٫٩٪ خلال أسبوعين، ومعدل التكرار ٤٫٦.', risk: 'منخفضة: نجرّب نسختين جديدتين إلى جانب القديمة.', metric: 'عودة نسبة النقر فوق ١٫٥٪' },
 ];
 function buyer() {
   const box = $('#dmRecs'), log = $('#dmLog'); if (!box || !log) return;
   box.innerHTML = RECS.map((r, i) => `<article class="dm-rec" data-i="${i}"><header><span class="st-chip">${r.plat}</span><h4>${esc(r.t)}</h4></header>
     <dl><div><dt>السبب</dt><dd>${esc(r.why)}</dd></div><div><dt>المخاطرة</dt><dd>${esc(r.risk)}</dd></div><div><dt>كيف نقيس النجاح</dt><dd>${esc(r.metric)}</dd></div></dl>
-    <div class="dm-reject" hidden><label for="rj-${i}">سبب الرفض</label><select id="rj-${i}"><option>الرقم مو كافي للحين</option><option>عندي سبب من السوق</option><option>نجربه الأسبوع الجاي</option></select><button type="button" class="btn secondary" data-act="rj-ok">ارفض</button></div>
+    <div class="dm-reject" hidden><label for="rj-${i}">سبب الرفض</label><select id="rj-${i}"><option>البيانات غير كافية حتى الآن</option><option>لدي سبب من السوق</option><option>نجرّبه الأسبوع القادم</option></select><button type="button" class="btn secondary" data-act="rj-ok">ارفض</button></div>
     <div class="st-acts"><button type="button" class="btn primary" data-act="ok">اعتمد</button><button type="button" class="btn ghost" data-act="no">ارفض</button></div></article>`).join('');
   const add = (text: string) => {
     if (log.querySelector('.muted')) log.innerHTML = '';
@@ -332,9 +332,9 @@ function buyer() {
     const b = (e.target as Element).closest<HTMLButtonElement>('[data-act]'); if (!b) return;
     const el = b.closest<HTMLElement>('.dm-rec')!, r = RECS[Number(el.dataset.i)]!;
     const done = (cls: string, word: string, msg: string) => { el.classList.add(cls); $$<HTMLButtonElement>('button', el).forEach(x => (x.disabled = true)); $('.st-acts', el)!.insertAdjacentHTML('beforeend', `<span class="st-chip ${cls === 'ok' ? 'ok' : 'hot'}">${word}</span>`); add(msg); };
-    if (b.dataset.act === 'ok') done('ok', 'معتمد', `<span>اعتمدت:</span> <span>${esc(r.t)}</span> · <span>${r.plat}</span>. <span>ينقاس بعد ٣ و٧ أيام.</span>`);
+    if (b.dataset.act === 'ok') done('ok', 'معتمد', `<span>اعتمدت:</span> <span>${esc(r.t)}</span> · <span>${r.plat}</span>. <span>يُقاس بعد ٣ و٧ أيام.</span>`);
     else if (b.dataset.act === 'no') { const f = $('.dm-reject', el)!; f.hidden = !f.hidden; if (!f.hidden) $<HTMLSelectElement>('select', f)!.focus(); }
-    else done('no', 'مرفوض', `<span>رفضت:</span> <span>${esc(r.t)}</span> · <span>السبب:</span> <span>${esc($<HTMLSelectElement>('select', el)!.value)}</span>. <span>ينحفظ كدرس.</span>`);
+    else done('no', 'مرفوض', `<span>رفضت:</span> <span>${esc(r.t)}</span> · <span>السبب:</span> <span>${esc($<HTMLSelectElement>('select', el)!.value)}</span>. <span>يُحفظ درسًا مستفادًا.</span>`);
   });
 }
 

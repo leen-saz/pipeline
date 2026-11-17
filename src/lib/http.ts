@@ -4,6 +4,9 @@ export interface SiteEnv {
   INBOX_PASSWORD?: string;
   REQUESTS_WEBHOOK?: string;
   IP_SALT?: string;               // key for the daily visitor hash
+  REQUESTS_EMAIL_TO?: string;     // every request is emailed here (src/lib/mail.ts)
+  RESEND_API_KEY?: string;        // optional: send through Resend instead of FormSubmit
+  MAIL_FROM?: string;
 }
 
 export const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>

@@ -9,6 +9,7 @@
   // Secrets (wrangler secret put …, never in this file):
   //   INBOX_PASSWORD     opens /inbox/ (user name: anything)
   //   IP_SALT            key for the daily visitor hash (any long random string)
+  //   RESEND_API_KEY + MAIL_FROM   optional: send the request emails through Resend (else FormSubmit, no key)
   //   REQUESTS_WEBHOOK   optional: Slack/Teams/automation URL told about each new request
   "vars": { "APP_ENV": "local" },
   "d1_databases": [{ "binding": "DB", "database_name": "apipeline-site", "database_id": "428aa06d-545a-4800-8516-09353d23f105" }],
@@ -16,7 +17,14 @@
     "production": {
       "name": "pipeline",
       "workers_dev": true,
-      "vars": { "APP_ENV": "production" },
+      "vars": { "APP_ENV": "production", "REQUESTS_EMAIL_TO": "leen@brandsforhome.sa" },
+      "d1_databases": [{ "binding": "DB", "database_name": "apipeline-site", "database_id": "428aa06d-545a-4800-8516-09353d23f105" }]
+    },
+    // Apipeline Security on its own link: build with npm run build:security, then wrangler deploy --env security
+    "security": {
+      "name": "apipeline-security",
+      "workers_dev": true,
+      "vars": { "APP_ENV": "production", "REQUESTS_EMAIL_TO": "leen@brandsforhome.sa" },
       "d1_databases": [{ "binding": "DB", "database_name": "apipeline-site", "database_id": "428aa06d-545a-4800-8516-09353d23f105" }]
     }
   }

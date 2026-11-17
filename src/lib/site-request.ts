@@ -47,7 +47,7 @@ export function cleanRequest(b: Record<string, unknown>): Cleaned {
   if (rawEmail && !em) errors.email = 'الإيميل غير صحيح';
   const scope = kind === 'security' && Array.isArray(b.scope) ? [...new Set(b.scope.map(String).filter(s => (SCOPES as readonly string[]).includes(s)))] : [];
   const message = text(b.message, 1500) || null;
-  if (b.consent !== true) errors.consent = 'نحتاج موافقتك عشان نتواصل معك';
+  if (b.consent !== true) errors.consent = 'نحتاج موافقتك للتواصل معك';
   const page = /^\/(security\/|profile\/)?$/.test(String(b.page)) ? String(b.page) : '/';
   const lang = b.lang === 'en' ? 'en' : 'ar';
   if (Object.keys(errors).length) return { ok: false, errors };

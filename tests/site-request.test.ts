@@ -90,11 +90,11 @@ describe('POST /api/request', () => {
     expect((await send(good, { origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' })).status).toBe(403);
     expect(rows()).toEqual([]);
   });
-  it('without the database or the salt, it says so and points to WhatsApp', async () => {
+  it('without the database, the salt or an email address, it says so', async () => {
     for (const env of [{}, { DB: E.DB }]) {
       const r = await send(good, {}, env);
       expect(r.status).toBe(503);
-      expect((await r.json() as { error: string }).error).toContain('واتساب');
+      expect((await r.json() as { error: string }).error).toContain('حاول بعد قليل');
     }
   });
   it('a bot gets OK and nothing is stored', async () => {
@@ -125,11 +125,11 @@ describe('POST /api/request', () => {
     expect(bad('lang=fr')).toThrow();
     expect(bad('scope=not json')).toThrow();
   });
-  it('before the migration, a submit says so (and points to WhatsApp)', async () => {
+  it('before the migration and with no email, a submit says it could not send', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const r = await send(good, {}, { ...E, DB: d1(false).db });
     expect(r.status).toBe(503);
-    expect((await r.json() as { error: string }).error).toContain('واتساب');
+    expect((await r.json() as { error: string }).error).toContain('حاول بعد قليل');
   });
   it('the webhook note says what was asked and where to read it, without phone or email', async () => {
     quiet();
@@ -196,5 +196,41 @@ describe('inbox password', () => {
     expect(await safeEqual('abc', 'abc')).toBe(true);
     expect(await safeEqual('abc', 'abd')).toBe(false);
     expect(await safeEqual('abc', 'abcd')).toBe(false);
+  });
+});
+
+describe('emailing a request', () => {
+  const to = 'owner@example.test';
+  const capture = () => {
+    const seen: { url: string; init: RequestInit }[] = [];
+    vi.stubGlobal('fetch', async (u: string, init: RequestInit) => { seen.push({ url: String(u), init }); return new Response('{}', { status: 200 }); });
+    return seen;
+  };
+  it('goes to the owner through FormSubmit with every field, and is stored too', async () => {
+    quiet(); const seen = capture();
+    expect((await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to })).status).toBe(200);
+    const m = seen.find(s => s.url.startsWith('https://formsubmit.co/ajax/'))!;
+    expect(m.url).toBe(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`);
+    const b = JSON.parse(String(m.init.body));
+    expect(b['الجوال']).toBe('+966501234567');
+    expect(b['الاسم']).toBe('سارة');
+    expect(b._replyto).toBe('test@example.com');
+    expect(rows()).toHaveLength(1);
+  });
+  it('uses Resend when a key and sender are set', async () => {
+    quiet(); const seen = capture();
+    await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to, RESEND_API_KEY: 'k', MAIL_FROM: 'site@example.test' });
+    const m = seen.find(s => s.url === 'https://api.resend.com/emails')!;
+    expect(JSON.parse(String(m.init.body)).to).toEqual([to]);
+  });
+  it('with no database, an email alone is enough', async () => {
+    quiet(); capture();
+    expect((await send(good, {}, { REQUESTS_EMAIL_TO: to })).status).toBe(200);
+  });
+  it('when the mail is refused and nothing was stored, the visitor is told', async () => {
+    quiet(); vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.stubGlobal('fetch', async () => new Response('', { status: 500 }));
+    const r = await send(good, {}, { REQUESTS_EMAIL_TO: to });
+    expect(r.status).toBe(503);
   });
 });

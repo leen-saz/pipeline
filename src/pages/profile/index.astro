@@ -7,33 +7,35 @@ import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import RequestForm from '../../components/RequestForm.astro';
 import CineHero from '../../components/CineHero.astro';
+import { SITE_MODE, MAIN_URL, SECURITY_URL } from '../../lib/public-site';
+if (SITE_MODE === 'security') return Astro.redirect(`${MAIN_URL}/profile/`, 301);
 
 
 const VALUES = [
-  ['الوضوح', 'رقم واحد يفهمه الكل أفضل من عشرين رقم ما أحد يقراها.'],
-  ['القرار للإنسان', 'الأنظمة تقترح وتجهّز، والشخص المسؤول هو اللي يعتمد.'],
-  ['الأمان أولًا', 'صلاحيات أقل، وسجل لكل خطوة، وزر يوقف كل شي.'],
-  ['الصدق في الأرقام', 'ما نعرض رقم ما نقدر نثبته، ولا نوعد بنتيجة ما نتحكم فيها.'],
+  ['الوضوح', 'رقم واحد يفهمه الجميع أفضل من عشرين رقمًا لا يقرؤها أحد.'],
+  ['القرار للإنسان', 'الأنظمة تقترح وتجهّز، والشخص المسؤول هو من يعتمد.'],
+  ['الأمان أولًا', 'أقل الصلاحيات الممكنة، وسجل موثّق لكل خطوة.'],
+  ['الصدق في الأرقام', 'لا نعرض رقمًا لا نستطيع إثباته، ولا نعد بنتيجة خارج سيطرتنا.'],
 ];
 
 const LINES = [
-  ['لوحة Apipeline', 'منصة', 'أرقام كل منصات الإعلان في لوحة وحدة، تتحدّث كل ساعة، وتسعة إيجنتس تقترح القرار وتنفّذه بعد موافقتك.', ['مزامنة Meta وGoogle وSnapchat وTikTok وGA4', 'لوحة قرارات بموافقة وتعديل ورفض', 'مراجع يفحص كل اقتراح على قواعدك', 'سجل كامل وزر طوارئ'], '/'],
-  ['خريطة التسرب', 'خدمة نمو', 'قبل ما تزيد الميزانية، نحدد وين يضيع العميل بين الإعلان والمبيعات، ونرتب الإصلاحات حسب أثرها.', ['مراجعة الإنفاق وجودة الليدز', 'تحديد نقطة التسرب: إعلان، عرض، صفحة، أو متابعة', 'خطة ٩٠ يوم بقرارات واضحة', 'ربط الحملات بالمبيعات'], ''],
-  ['الأمن السيبراني', 'خدمة فحص', 'فحص أمني للكود والمواقع والـ API وتطبيقات الجوال، مع تقرير مرتب حسب الخطورة وإعادة فحص بعد الإصلاح.', ['مراجعة الكود والمكتبات والأسرار', 'اختبار اختراق للويب والجوال', 'مراجعة إعدادات السحابة', 'ربط النتائج بضوابط ECC وPDPL'], '/security/'],
+  ['لوحة Apipeline', 'منصة', 'أرقام منصات الإعلان كلها في لوحة واحدة تتحدّث كل ساعة، وسبعة وكلاء وأكثر يقترحون القرار وينفّذونه بعد موافقتك.', ['مزامنة Meta وGoogle وSnapchat وTikTok وGA4', 'لوحة قرارات بموافقة وتعديل ورفض', 'مراجع يفحص كل اقتراح على قواعدك', 'سجل كامل لكل قرار'], '/'],
+  ['خريطة التسرب', 'خدمة نمو', 'قبل زيادة الميزانية، نحدد أين يضيع العميل بين الإعلان والمبيعات، ونرتب الإصلاحات حسب أثرها.', ['مراجعة الإنفاق وجودة العملاء المحتملين', 'تحديد نقطة التسرب: إعلان، عرض، صفحة، أو متابعة', 'خطة ٩٠ يومًا بقرارات واضحة', 'ربط الحملات بالمبيعات'], ''],
+  ['الأمن السيبراني', 'خدمة فحص', 'فحص أمني للكود والمواقع والـ API وتطبيقات الجوال، مع تقرير مرتب حسب الخطورة وإعادة فحص بعد الإصلاح.', ['مراجعة الكود والمكتبات والأسرار', 'اختبار اختراق للويب والجوال', 'مراجعة إعدادات السحابة', 'ربط النتائج بضوابط ECC وPDPL'], SECURITY_URL],
 ];
 
 const HOW = [
-  ['نقرا', 'نفهم نشاطك وأرقامك وأنظمتك كما هي، قبل أي اقتراح.'],
-  ['نحدد', 'نرتب المشاكل حسب أثرها الفعلي، مو حسب سهولتها.'],
-  ['ننفّذ', 'نصلح ونقيس، وكل تغيير موثّق وتقدر ترجع عنه.'],
-  ['نتعلّم', 'كل نتيجة تدخل في القرار اللي بعده.'],
+  ['نقرأ', 'نفهم نشاطك وأرقامك وأنظمتك كما هي، قبل أي اقتراح.'],
+  ['نحدد', 'نرتب المشكلات حسب أثرها الفعلي، لا حسب سهولتها.'],
+  ['ننفّذ', 'نصلح ونقيس، وكل تغيير موثّق ويمكن التراجع عنه.'],
+  ['نتعلّم', 'كل نتيجة تُبنى عليها القرارات التالية.'],
 ];
 
 const FIT = [
-  'عندك إنفاق إعلاني قائم أو قرار جاد بالاستثمار فيه',
-  'عندك منتج رقمي، موقع أو تطبيق، وتبي تعرف وضعه الأمني',
-  'مستعد تشارك البيانات وتتعامل مع الأرقام بوضوح',
-  'تبي تحسين فعلي، مو تقرير نهاية الشهر',
+  'لديك إنفاق إعلاني قائم أو نية جادة للاستثمار فيه',
+  'لديك منتج رقمي، موقع أو تطبيق، وتريد معرفة وضعه الأمني',
+  'مستعد لمشاركة البيانات والتعامل مع الأرقام بوضوح',
+  'تبحث عن تحسين فعلي، لا تقرير نهاية الشهر',
 ];
 ---
 <!doctype html>
@@ -45,7 +47,7 @@ const FIT = [
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#040C20">
 <title>Apipeline · بروفايل الشركة</title>
-<meta name="description" content="بروفايل Apipeline: من نحن، وش نقدّم، وكيف نشتغل.">
+<meta name="description" content="بروفايل Apipeline: من نحن، وما نقدّمه، وكيف نعمل.">
 <link rel="preload" href="/assets/fonts/thmanyahserifdisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/playfair-display-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/app.css">
@@ -79,21 +81,21 @@ const FIT = [
 <SiteHeader current="/profile/" cta={{ href: '#request', label: 'تواصل معنا' }} />
 
 <main>
-  <CineHero label="Apipeline · بروفايل الشركة" chapters={[{ kick: 'رؤيتنا', text: 'كل قرار تسويقي في المنطقة مبني على رقم واضح، وكل منتج رقمي مفحوص قبل ما يوصل للناس.' }, { kick: 'رسالتنا', text: 'نجمع الأرقام، نقترح القرار، ونترك الاعتماد لصاحبه. ونلقى الثغرة قبل لا يلقاها غيرك.' }]}>
+  <CineHero label="Apipeline · بروفايل الشركة" chapters={[{ kick: 'رؤيتنا', text: 'أن يُبنى كل قرار تسويقي في المنطقة على رقم واضح، وأن يُفحص كل منتج رقمي قبل وصوله إلى الناس.' }, { kick: 'رسالتنا', text: 'نجمع الأرقام، نقترح القرار، ونترك الاعتماد لصاحبه. ونكتشف الثغرة قبل أن يكتشفها غيرك.' }]}>
     <div class="pf-cover">
     <p class="yr">بروفايل الشركة · ٢٠٢٦</p>
-    <span class="mark">Apipeline<i>.</i></span>
-    <h1>نحوّل أرقام التسويق لقرارات واضحة، ونفحص أمن المنتجات الرقمية قبل ما تنطلق.</h1>
+    <span class="mark">Apipeline</span>
+    <h1>نحوّل أرقام التسويق إلى قرارات واضحة، ونفحص أمن المنتجات الرقمية قبل إطلاقها.</h1>
     <div class="st-cta">
       <button class="btn primary" type="button" data-print>حمّل البروفايل PDF</button>
-      <a class="btn secondary" href="#lines">وش نقدّم</a>
+      <a class="btn secondary" href="#lines">ما نقدّمه</a>
     </div>
     </div>
   </CineHero>
 
   <section class="st-words-sec">
     <div class="st-wrap">
-      <p class="st-words" data-words>Apipeline شركة سعودية تقنية. بدأنا من سؤال بسيط يتكرر في كل شركة: وين راحت الميزانية، ووش نسوي بكرة؟ اليوم نبني الأدوات اللي تجاوب عليه، ونحمي المنتجات اللي تعتمد عليها.</p>
+      <p class="st-words" data-words>Apipeline شركة تقنية سعودية. بدأنا من سؤال يتكرر في كل شركة: أين ذهبت الميزانية، وما خطوتنا القادمة؟ واليوم نبني الأدوات التي تجيب عنه، ونحمي المنتجات التي تعتمد عليها.</p>
     </div>
   </section>
 
@@ -101,7 +103,7 @@ const FIT = [
     <div class="st-wrap">
       <header class="st-head" data-reveal>
         <span class="kick">قيمنا</span>
-        <h2>أربع قواعد نشتغل عليها</h2>
+        <h2>أربع قواعد نعمل بها</h2>
       </header>
       <div class="st-grid four">
         {VALUES.map(([t, d]) => <article class="st-tile" data-reveal><h3>{t}</h3><p>{d}</p></article>)}
@@ -113,13 +115,13 @@ const FIT = [
     <div class="st-wrap">
       <header class="st-head" data-reveal>
         <span class="kick">بالأرقام</span>
-        <h2>اللي في المنتج اليوم</h2>
+        <h2>ما يقدّمه المنتج اليوم</h2>
       </header>
       <div class="st-nums">
-        <div data-reveal><b data-count="9">٩</b><span>إيجنتس، كل واحد بشغلة واضحة</span></div>
-        <div data-reveal><b data-count="10">١٠</b><span>منصات يقرا منها</span></div>
+        <div data-reveal><b data-count="7">٧</b><span>وكلاء وأكثر، لكل وكيل مهمة واضحة</span></div>
+        <div data-reveal><b data-count="10">١٠</b><span>منصات يقرأ منها</span></div>
         <div data-reveal><b data-count="24">٢٤</b><span>مزامنة في اليوم، كل ساعة</span></div>
-        <div data-reveal><b data-count="5">٥</b><span>خطوات في كل قرار، من الرقم للدرس</span></div>
+        <div data-reveal><b data-count="5">٥</b><span>خطوات في كل قرار، من الرقم إلى الدرس</span></div>
       </div>
     </div>
   </section>
@@ -127,8 +129,8 @@ const FIT = [
   <section class="st-sec st-page" id="lines">
     <div class="st-wrap">
       <header class="st-head" data-reveal>
-        <span class="kick">وش نقدّم</span>
-        <h2>ثلاث خطوط، وطريقة شغل وحدة</h2>
+        <span class="kick">ما نقدّمه</span>
+        <h2>ثلاثة مسارات، ومنهجية واحدة</h2>
       </header>
       {LINES.map(([t, tag, d, list, href]) => (
         <article class="pf-line" data-reveal>
@@ -147,8 +149,8 @@ const FIT = [
   <section class="st-sec" style="padding-top:0">
     <div class="st-wrap">
       <header class="st-head" data-reveal>
-        <span class="kick">كيف نشتغل</span>
-        <h2>ما نعدّل شي قبل ما نعرف وين الخلل</h2>
+        <span class="kick">كيف نعمل</span>
+        <h2>لا نغيّر شيئًا قبل أن نحدد موضع الخلل</h2>
       </header>
       <div class="pf-how">
         {HOW.map(([t, d]) => <div data-reveal><h3>{t}</h3><p>{d}</p></div>)}
@@ -160,7 +162,7 @@ const FIT = [
     <div class="st-wrap">
       <header class="st-head" data-reveal>
         <span class="kick">لمن</span>
-        <h2>نناسبك إذا تبي تعرف الحقيقة قبل ما تقرر</h2>
+        <h2>نناسبك إن كنت تريد الحقيقة قبل القرار</h2>
       </header>
       <ul class="pf-fit">
         {FIT.map(x => <li data-reveal>{x}</li>)}
@@ -168,10 +170,10 @@ const FIT = [
     </div>
   </section>
 
-  <div class="st-noprint"><RequestForm kind="board" title="خلنا نبدأ من أرقامك" lead="اختر وش تحتاج: تجربة اللوحة، أو خريطة التسرب لإعلاناتك، أو فحص أمني لمنتجك. ونرد عليك خلال يوم عمل." /></div>
+  <div class="st-noprint"><RequestForm kind="board" title="لنبدأ من أرقامك" lead="اختر ما تحتاجه: تجربة اللوحة أو خريطة التسرب لإعلاناتك، ونرد عليك خلال يوم عمل." /></div>
 </main>
 
-<SiteFooter line="نحوّل الأرقام لقرارات، ونحمي اللي تبنيه." />
+<SiteFooter line="نحوّل الأرقام إلى قرارات، ونحمي ما تبنيه." />
 
 <script is:inline type="module" src="/assets/welcome.js"></script>
 <script>
