@@ -464,4 +464,11 @@ export const SITE_EN = {
   "عزل تام لكل شركة": "Every company fully isolated",
   "تختار لكل وكيل: يعمل تلقائيًا، أو ينتظر موافقتك مع تنبيه.": "For each agent you choose: run on its own, or wait for your approval with an alert.",
   "اربط حساباتك ودع الأرقام تتحدث": "Connect your accounts and let the numbers speak",
+  "بروفايل الشركة · ٢٠٢٦": "Company profile · 2026",
+  "نحوّل أرقام التسويق": "We turn marketing numbers",
+  "إلى قرارات واضحة.": "into clear decisions.",
+  "شركة تقنية سعودية تبني لوحة قرارات تسويقية يديرها وكلاء أذكياء، والاعتماد دائمًا لك.": "A Saudi tech company building a marketing decision board run by AI agents. You always approve.",
+  "أن يُبنى كل قرار تسويقي في المنطقة على رقم واضح.": "Every marketing decision in the region built on a clear number.",
+  "نجمع الأرقام، ونقترح القرار، ونترك الاعتماد لصاحبه.": "We gather the numbers, suggest the decision, and leave the approval to its owner.",
+  "نحوّل الأرقام إلى قرارات واضحة.": "We turn numbers into clear decisions.",
 };
