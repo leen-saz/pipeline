@@ -1,0 +1,51 @@
+---
+// "Pill cards" (.claude/skills/pill-cards-motion/SKILL.md): a frosted card with a small pager, a heading and a sub-line,
+// and under them rows of rounded pills running as endless marquees in alternating directions.
+//   ① flowing: the rows run (the agents, the platforms, the steps, the numbers).
+//   ② healthy: the rows slow to a stop, tidy, every pill ticked.
+//   ③ disrupted, then fixed: a few pills break out of their rows along thin curved arrows with small labels,
+//      then snap back into place when the agent fixes them.
+// The visual rows are decorative (aria-hidden); the same labels are listed once for screen readers. Without JS or with
+// reduced motion the rows sit still and the pager just switches the text. Motion: src/lib/pill-cards.ts.
+interface Step { kick: string; title: string; text: string; list?: string[] }
+interface Props { id?: string; rows: string[][]; steps: Step[]; drift: string[]; fixed: string; label: string }
+const { id = 'pills', rows, steps, drift, fixed, label } = Astro.props;
+const ar = (n: number) => n.toLocaleString('ar-SA');
+// each copy must be wider than the card, or the loop shows a gap: short rows repeat their labels inside one copy
+const fill = (r: string[]) => { const out = [...r]; while (out.join('').length < 70) out.push(...r); return out; };
+---
+<section class="st-sec pc-sec" id={id} aria-labelledby={`${id}-h`}>
+  <div class="st-wrap">
+    <article class="pc" data-pc>
+      <div class="pc-pager" role="group" aria-label={label}>
+        {steps.map((_, i) => (
+          <button type="button" data-pc-go={i} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`${ar(i + 1)} من ${ar(steps.length)}`}><span>{ar(i + 1)}</span></button>
+        ))}
+      </div>
+      <div class="pc-texts">
+        {steps.map((s, i) => (
+          <div class="pc-text" data-pc-text={i} hidden={i !== 0}>
+            <span class="kick">{s.kick}</span>
+            {i === 0 ? <h2 id={`${id}-h`}>{s.title}</h2> : <h3>{s.title}</h3>}
+            <p>{s.text}</p>
+            {s.list && <ul class="pc-list">{s.list.map(t => <li>{t}</li>)}</ul>}
+          </div>
+        ))}
+      </div>
+      <ul class="sr-only">{rows.flat().map(t => <li>{t}</li>)}</ul>
+      <div class="pc-rows" aria-hidden="true" data-pc-rows>
+        {rows.map((r, i) => (
+          <div class="pc-row" data-pc-row={i % 2 ? 'rev' : 'fwd'}>
+            <div class="pc-track" dir="ltr" data-pc-track>
+              {[0, 1].map(() => <span class="pc-set">{fill(r).map((t, j) => <span class:list={['pc-pill', { rep: j >= r.length }]} dir="auto">{t}</span>)}</span>)}
+            </div>
+          </div>
+        ))}
+        <svg class="pc-arrows" data-pc-arrows data-tip={`url(#${id}-tip)`}><defs><marker id={`${id}-tip`} viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 8 4 0 8z"/></marker></defs></svg>
+        <div class="pc-notes" data-pc-notes>{drift.map(t => <span class="pc-note">{t}</span>)}</div>
+        <span class="pc-fixed" data-pc-fixed>{fixed}</span>
+      </div>
+      <footer class="pc-foot"><span class="pc-badge">Apipeline<i>.</i></span></footer>
+    </article>
+  </div>
+</section>

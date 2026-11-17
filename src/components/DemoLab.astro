@@ -1,0 +1,88 @@
+---
+// The live demo on the landing page: three tabs a visitor can use (احلم، التحليلات، الميديا باير), all with fake data,
+// no backend and no network. Logic: src/lib/demo.ts. Styles: the "demo" block in /assets/site.css.
+// Copy follows .claude/skills/apipeline-saudi-voice; every Arabic string has its English pair in i18n-en-site.js.
+const IDEAS = [
+  ['skin', 'إطلاق منتج جديد لعناية البشرة'],
+  ['home', 'عرض نهاية الموسم لمتجر أدوات منزلية'],
+  ['clinic', 'حجز جلسات رعاية صحية في البيت'],
+];
+---
+<section class="st-sec dm" id="demo" aria-labelledby="demoH">
+  <div class="st-wrap">
+    <header class="st-head" data-reveal>
+      <span class="kick">جرّبه بنفسك</span>
+      <h2 id="demoH">ديمو حي، بدون تسجيل</h2>
+      <p>ثلاث تابات من النظام نفسه. اكتب فكرة حملة، شوف الأرقام، واعتمد قرار. كل شي هنا يشتغل في متصفحك بس.</p>
+      <p class="dm-badge"><span class="st-chip">ديمو ببيانات وهمية</span></p>
+    </header>
+
+    <div class="dm-shell">
+      <div class="dm-tabs" role="tablist" aria-label="تابات الديمو">
+        <button type="button" role="tab" id="dmt-dream" aria-controls="dmp-dream" aria-selected="true">احلم</button>
+        <button type="button" role="tab" id="dmt-analytics" aria-controls="dmp-analytics" aria-selected="false" tabindex="-1">التحليلات</button>
+        <button type="button" role="tab" id="dmt-buyer" aria-controls="dmp-buyer" aria-selected="false" tabindex="-1">الميديا باير</button>
+      </div>
+
+      <!-- احلم -->
+      <div class="dm-panel" role="tabpanel" id="dmp-dream" aria-labelledby="dmt-dream">
+        <form class="dm-ask" id="dmAsk">
+          <label for="dmIdea">وش فكرة حملتك؟</label>
+          <div class="dm-ask-row">
+            <input id="dmIdea" type="text" maxlength="120" autocomplete="off" placeholder="مثال: إطلاق منتج جديد لعناية البشرة">
+            <button class="btn primary" type="submit">ابدأ الحلم</button>
+          </div>
+          <div class="dm-ideas" role="group" aria-label="أفكار جاهزة">
+            {IDEAS.map(([k, t]) => <button type="button" class="dm-pill" data-idea={k}>{t}</button>)}
+          </div>
+        </form>
+        <div class="dm-chat" id="dmChat" aria-live="polite"></div>
+        <div class="dm-draft" id="dmDraft" hidden></div>
+        <div class="dm-publish" id="dmPublishBar" hidden>
+          <p><b id="dmApproved">٠</b> <span>من</span> <b id="dmTotal">٦</b> <span>أجزاء معتمدة</span></p>
+          <button class="btn primary" type="button" id="dmPublish" disabled>انشر</button>
+        </div>
+        <dialog class="dm-dialog" id="dmConfirm" aria-labelledby="dmConfirmH">
+          <h3 id="dmConfirmH">هذي اللي بينشأ في المنصات</h3>
+          <p class="muted">كل الحملات تنشأ <b>موقوفة</b>، وما تشتغل إلا لما تشغّلها بنفسك من المنصة.</p>
+          <ul id="dmConfirmList"></ul>
+          <p class="dm-note">ديمو: ما يتنفّذ شي فعليًا.</p>
+          <div class="st-acts"><button class="btn primary" type="button" id="dmConfirmOk">تأكيد الإنشاء</button><button class="btn ghost" type="button" id="dmConfirmNo">رجوع</button></div>
+        </dialog>
+      </div>
+
+      <!-- التحليلات -->
+      <div class="dm-panel" role="tabpanel" id="dmp-analytics" aria-labelledby="dmt-analytics" hidden>
+        <div class="dm-row">
+          <h3>ملخص الأداء</h3>
+          <div class="seg" role="group" aria-label="الفترة" id="dmRange">
+            <button type="button" data-days="7" aria-pressed="false">٧ أيام</button>
+            <button type="button" data-days="30" aria-pressed="true">٣٠ يوم</button>
+            <button type="button" data-days="90" aria-pressed="false">٩٠ يوم</button>
+          </div>
+        </div>
+        <div class="dm-kpis" id="dmKpis"></div>
+        <div class="dm-two">
+          <figure class="dm-card">
+            <figcaption>القمع</figcaption>
+            <div id="dmFunnel" class="dm-funnel"></div>
+          </figure>
+          <figure class="dm-card">
+            <figcaption>الصرف والمبيعات باليوم</figcaption>
+            <svg id="dmChart" class="dm-chart" viewBox="0 0 320 140" role="img" aria-label="رسم الصرف والمبيعات باليوم"></svg>
+            <p class="dm-legend"><span class="sw a"></span><span>المبيعات</span> <span class="sw b"></span><span>الصرف</span></p>
+          </figure>
+        </div>
+      </div>
+
+      <!-- الميديا باير -->
+      <div class="dm-panel" role="tabpanel" id="dmp-buyer" aria-labelledby="dmt-buyer" hidden>
+        <div class="dm-recs" id="dmRecs"></div>
+        <div class="dm-card dm-log">
+          <h3>سجل القرارات</h3>
+          <ol id="dmLog"><li class="muted">ما فيه قرارات للحين.</li></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

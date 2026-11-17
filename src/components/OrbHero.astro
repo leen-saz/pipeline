@@ -1,0 +1,19 @@
+---
+// The landing hero (Leen's reference): a soft, heavily blurred iridescent orb centred on a light warm-grey grainy page,
+// with large thin ink type under it. No video and no canvas: the orb is a few layered gradients under a CSS blur.
+//   .orb-halo  faint violet/periwinkle glow off the right edge
+//   .orb-body  butter yellow at the top, dusty rose low on the left, warm cream base
+//   .orb-band  the diagonal orange-red band; this layer turns slowly (26 s), so the colour drifts around the sphere
+//   .orb-rim   thin glowing mint rim on the left and bottom (an inset shadow)
+// The wrapper breathes (±2 %, 9 s) and, on desktop with a fine pointer, leans a little toward the cursor
+// (src/lib/orb.ts). Reduced motion: everything holds still. Styles: the "light orb" block in /assets/site.css.
+---
+<section class="orb-hero" aria-labelledby="orbH">
+  <div class="st-wrap orb-in">
+    <div class="orb" aria-hidden="true" data-orb>
+      <span class="orb-halo"></span>
+      <span class="orb-ball"><span class="orb-body"></span><span class="orb-band"></span><span class="orb-rim"></span></span>
+    </div>
+    <div class="orb-text"><slot /></div>
+  </div>
+</section>
