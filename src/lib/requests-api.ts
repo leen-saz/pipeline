@@ -1,5 +1,5 @@
 // What the endpoints do, kept apart from Astro so the tests can call it with a plain Request and env.
-//   POST   /api/request    public: the request form on /, /security/ and /profile/ (src/pages/api/request.ts)
+//   POST   /api/request    public: the request form on /, /profile/ and the Security site (src/pages/api/request.ts)
 //   GET    /api/requests   inbox: the list, newest first, optional ?status=
 //   PATCH  /api/requests   inbox: { id, status } new → contacted → closed
 //   DELETE /api/requests   inbox: { id } removes the row for good (a visitor asking to be forgotten, PDPL)

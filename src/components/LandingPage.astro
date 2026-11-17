@@ -1,0 +1,255 @@
+---
+// Public landing page for the Apipeline board, told as a scroll story.
+// Copy: .claude/skills/apipeline-saudi-voice (Saudi white dialect for titles, light MSA for detail; no superlatives,
+// no testimonials, demo numbers labelled). Motion: src/lib/scroll-story.ts. Styles: /assets/site.css on app.css tokens.
+import SiteHeader from './SiteHeader.astro';
+import SiteFooter from './SiteFooter.astro';
+import RequestForm from './RequestForm.astro';
+import OrbHero from './OrbHero.astro';
+import PillCards from './PillCards.astro';
+import DemoLab from './DemoLab.astro';
+
+const ar = (n: number) => n.toLocaleString('ar-SA');
+const LOGOS = ['meta', 'googleads', 'snapchat', 'tiktok', 'googleanalytics', 'x', 'pinterest', 'reddit', 'googlesearchconsole', 'posthog'];
+
+// Pill cards rows (src/components/PillCards.astro): the agents, the platforms, the loop, the numbers
+const PILL_ROWS = [
+  ['احلم', 'التحليلات', 'الميديا باير', 'السوشال', 'الرصد', 'التصميم', 'الصوت'],
+  ['Meta', 'Google', 'Snapchat', 'TikTok', 'GA4', 'سلة', 'زد', 'X'],
+  ['يسحب كل ساعة', 'يحلل السبب', 'يقترح القرار', 'تعتمد أنت', 'يسجّل الإيصال'],
+  ['العائد على الصرف', 'تكلفة الطلب', 'نسبة النقر', 'الميزانية اليومية', 'القمع', 'السجل'],
+];
+const PILL_DRIFT = ['يصرف بلا طلب', 'الجمهور تعب منه', 'رقم بلا سبب', 'ميزانية في المكان الغلط'];
+const STEPS = [
+  ['يسحب', 'كل منصاتك، كل ساعة', 'يجيب أرقام Meta وGoogle وSnapchat وTikTok وGA4 ومبيعات متجرك لنفس اللوحة. بدون ملفات تصدير، وبدون نسخ ولصق.'],
+  ['يحلل', 'الرقم ومعه سببه', 'يقارن كل رقم بالفترة اللي قبلها، ويقول لك وش المنصة أو الإعلان اللي حرّكه.'],
+  ['يقترح', 'قرار جاهز بسببه ومخاطرته', 'إيقاف إعلان يصرف بلا نتيجة، رفع ميزانية اللي عائده فوق الهدف، أو كرييتف جديد. ومع كل اقتراح كيف نقيس نجاحه.'],
+  ['تعتمد', 'أنت صاحب القرار', 'موافقة، تعديل، أو رفض بسبب. في وضع الموافقة ما يتنفّذ شي بدونك.'],
+  ['يسجّل', 'كل خطوة لها إيصال', 'كل تنفيذ ينكتب في السجل، ويقيس نتيجته بعد ٣ و٧ أيام، ويتعلم منها للاقتراح الجاي.'],
+];
+
+const AGENTS = [
+  ['يبني', 'احلم', 'تكتب فكرة حملة، ويطلع لك الاستراتيجية والجمهور والميزانية والنصوص والتصاميم والموشن والفويس أوفر. وينشرها في المنصات موقوفة.'],
+  ['يقيس', 'التحليلات', 'القمع كامل، ومع كل رقم سطر يقول ليش تغيّر.'],
+  ['يقرر', 'الميديا باير', 'توصيات بسببها ومخاطرتها وكيف نقيس نجاحها، ويتعلم من نتيجة كل قرار.'],
+  ['ينشر', 'السوشال', 'منشور واحد لكذا منصة، بجدولة وموافقة.'],
+  ['يراقب', 'الرصد', 'وش ينقال عنك وعن منافسينك، وهل الكلام إيجابي ولا سلبي.'],
+  ['يصمم', 'التصميم', 'صورة منتجك في مشهد جديد، بكل المقاسات، والنص طبقة فوقها.'],
+  ['يتكلم', 'الصوت', 'فويس أوفر بلهجة نجدية بطول إعلانك، تسمعه وتنزله.'],
+];
+
+const OUTCOMES = [
+  ['قبل', 'كل صباح تجمع الأرقام من خمس منصات، وتخمّن وش تسوي.'],
+  ['بعد', 'تفتح اللوحة وتلقى الأرقام وسببها، والقرار جاهز ينتظر موافقتك.'],
+  ['قبل', 'الحملة الجديدة تاخذ أسبوع بين البريف والتصاميم والنصوص.'],
+  ['بعد', 'تكتب الفكرة في احلم، وتطلع المسودة كاملة تعدّلها وتعتمدها.'],
+];
+
+const RULES = [
+  ['قراءة بس', 'حسابات الإعلانات ما تتعدّل إلا داخل حملات التجربة اللي تحددها أنت.', 'M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'],
+  ['زر طوارئ', 'ضغطة وحدة توقف كل تنفيذ، وكل خطوة لها إيصال في السجل.', 'M12 2v10 M18.4 6.6a9 9 0 1 1-12.8 0'],
+  ['كل شركة لحالها', 'بياناتك معزولة عن غيرك من أول جدول.', 'M5 11h14v10H5z M8 11V7a4 4 0 0 1 8 0v4'],
+  ['تلقائي أو يدوي', 'لكل وكيل تختار: يمشي لحاله، أو ينتظر موافقتك مع تنبيه.', 'M4 6h10 M18 6h2 M4 12h4 M12 12h8 M4 18h12 M20 18h0 M16 4v4 M10 10v4 M18 16v4'],
+];
+
+const FAQ = [
+  ['هل يتنفّذ شي بدون موافقتي؟', 'لا في وضع الموافقة. كل اقتراح يوصلك مع أرقامه وسببه ومخاطرته، وما يتحرك إلا بعد ما توافق. وتقدر تخلي وكيل معيّن يمشي تلقائيًا داخل حدود تحددها أنت.'],
+  ['احلم ينشر الحملة على طول؟', 'لا. ينشئ الحملة في المنصات موقوفة، وما تشتغل إلا لما تشغّلها أنت من المنصة. وقبل الإنشاء يعرض لك كل شي بينشأ.'],
+  ['وش المنصات اللي يقرأ منها؟', 'Meta وGoogle Ads وSnapchat وTikTok وGA4، مع X وPinterest وReddit وSearch Console. كل ربط يتم بتسجيل الدخول في المنصة نفسها.'],
+  ['وين تنحفظ بياناتي؟', 'بيانات كل شركة معزولة عن غيرها، ومفاتيح الربط محفوظة في خزنة مشفّرة. وتقدر تفك أي ربط بضغطة وتنمسح مفاتيحه.'],
+  ['هل يغني عن فريق التسويق؟', 'لا. يختصر على فريقك جمع الأرقام والمتابعة اليومية وتجهيز المواد، ويخلي وقتهم للقرار والإبداع. القرار الأخير دايم عند شخص.'],
+];
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#ECEBE8">
+<title>Apipeline · نظام وكلاء أذكياء لإعلاناتك</title>
+<meta name="description" content="نظام وكلاء أذكياء يدير إعلاناتك: يحلل، ويقرر، ويشرح ليش، وأنت تعتمد. جرّب الديمو.">
+<link rel="preload" href="/assets/fonts/thmanyahserifdisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/playfair-display-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/app.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body class="st st-night st-warm">
+
+<SiteHeader current="/" cta={{ href: '#request', label: 'تواصل معنا' }} />
+
+<main>
+  <OrbHero>
+      <p class="st-eyebrow">نظام وكلاء أذكياء يدير إعلاناتك</p>
+      <h1 class="st-h1">يقرر، ويشرح ليش. <em>وأنت تعتمد.</em></h1>
+      <p class="st-lead">Apipeline يجمع أرقام منصاتك ومبيعاتك كل ساعة، ويجهز الحملة من فكرة، ويقترح وش توقف ووش ترفع مع السبب والمخاطرة. توافق، ويتنفّذ ويتسجّل.</p>
+      <div class="st-cta">
+        <a class="btn primary" href="#demo">جرّب الديمو</a>
+        <a class="btn secondary" href="#request" data-kind="board">اطلب تجربة على أرقامك</a>
+      </div>
+      <p class="st-note">الأرقام في الأمثلة بيانات تجريبية.</p>
+  </OrbHero>
+
+  <PillCards
+    label="خطوات القصة"
+    rows={PILL_ROWS}
+    steps={[
+      { kick: 'كل شي في مكان واحد', title: 'سبعة وكلاء على نفس الأرقام', text: 'كل منصة وكل رقم وكل خطوة في لوحة وحدة، وتتحدّث كل ساعة.' },
+      { kick: 'الحساب الصاحي', title: 'كل إعلان في مكانه', text: 'الصرف رايح للي يجيب نتيجة، وكل رقم معه سببه.' },
+      { kick: 'لما يتلخبط شي', title: 'يلقطه الوكيل، ويرجّعه بموافقتك', text: 'إعلان يصرف بلا طلب، أو كرييتف تعب منه الجمهور: يوصلك الاقتراح مع السبب، تعتمد، ويرجع كل شي لمكانه.', list: PILL_DRIFT },
+    ]}
+    drift={PILL_DRIFT}
+    fixed="رجّعها الوكيل بموافقتك"
+  />
+
+  <section class="st-sec st-demo">
+    <div class="st-wrap st-demo-in">
+      <header class="st-head" data-reveal>
+        <span class="kick">مثال من لوحة القرارات</span>
+        <h2>القرار يوصلك جاهز</h2>
+        <p>كل اقتراح معه أرقامه، والمراجع فحصه على قواعدك قبل ما يوصلك. توافق، تعدّل، أو ترفض.</p>
+      </header>
+    <div class="st-stack" role="img" aria-label="مثال من لوحة القرارات">
+      <article class="st-card" style="inset-inline-start:0;top:24px;width:min(100%,430px);z-index:3" data-depth="0.08">
+        <span class="k">اقتراح · Meta</span>
+        <h3>إيقاف إعلان يصرف ٣ أيام بدون ولا ليد</h3>
+        <dl class="st-stats">
+          <div><dt>الصرف</dt><dd>٨٤٠ ر.س</dd></div>
+          <div><dt>الليدز</dt><dd>٠</dd></div>
+          <div><dt>نسبة النقر</dt><dd>٠٫٤٪</dd></div>
+        </dl>
+        <div class="st-acts"><span class="btn primary">موافقة</span><span class="btn secondary">تعديل</span><span class="btn ghost">رفض</span></div>
+      </article>
+      <article class="st-card" style="inset-inline-end:0;top:250px;width:min(88%,360px);z-index:2" data-depth="0.22">
+        <span class="k">اقتراح · Snapchat</span>
+        <h3>رفع ميزانية مجموعة تكلفتها تحت الهدف بـ ٣٢٪</h3>
+        <span class="st-chip ok">المراجع: مطابق لقواعدك</span>
+      </article>
+      <article class="st-card" style="inset-inline-start:6%;top:410px;z-index:4;padding:12px 14px" data-depth="0.4">
+        <span class="st-chip hot">زر الطوارئ</span>
+      </article>
+    </div>
+    </div>
+  </section>
+
+  <section class="st-logos" aria-label="المنصات">
+    <p>يقرا من منصاتك</p>
+    <div class="st-marquee" aria-hidden="true">
+      {[...LOGOS, ...LOGOS].map(l => <span style={`--src:url(/assets/logos/${l}.svg)`}></span>)}
+    </div>
+  </section>
+
+  <section class="st-words-sec">
+    <div class="st-wrap">
+      <p class="st-words" data-words>الصرف في Meta، والليدز في ملف إكسل، والمبيعات في واتساب. كل منصة تقول قصة، وما أحد يقول لك وش تسوي بكرة الصبح. Apipeline يجمعها في لوحة وحدة، ويحط القرار قدامك.</p>
+    </div>
+  </section>
+
+  <section class="st-sec" id="outcome" style="padding-top:0">
+    <div class="st-wrap">
+      <header class="st-head" data-reveal>
+        <span class="kick">وش يتغيّر</span>
+        <h2>من الرقم للقرار، بدون ما تطارد أحد</h2>
+      </header>
+      <div class="st-grid four">
+        {OUTCOMES.map(([t, d]) => <article class="st-tile" data-reveal><h3>{t}</h3><p>{d}</p></article>)}
+      </div>
+    </div>
+  </section>
+
+  <DemoLab />
+
+  <section class="st-sec" id="how" style="padding-top:0">
+    <div class="st-wrap">
+      <header class="st-head" data-reveal>
+        <span class="kick">كيف يشتغل</span>
+        <h2>دورة وحدة تمشي كل ساعة</h2>
+        <p>من الرقم للقرار للدرس، وأنت في النص. كل خطوة مسجلة وتقدر ترجع عنها.</p>
+      </header>
+      <div class="st-steps" data-steps>
+        <div class="st-steps-visual" data-steps-visual aria-hidden="true">
+          <div class="st-panel">
+            <span class="k st-chip">آخر مزامنة الآن</span>
+            <ul>
+              <li>Meta Ads<b>١٢:٠٠</b></li><li>Google Ads<b>١٢:٠٠</b></li><li>Snapchat<b>١٢:٠٠</b></li><li>TikTok<b>١٢:٠٠</b></li><li>GA4<b>١٢:٠٠</b></li>
+            </ul>
+          </div>
+          <div class="st-panel">
+            <span class="k" style="color:var(--accent);font:500 12px/1 var(--f-ar)">العائد على الصرف</span>
+            <h3 style="font:700 20px/1.5 var(--f-ar);margin:0">٣٫٤× <small style="font-size:14px;color:var(--muted)">▲ ١٢٪</small></h3>
+            <p style="margin:0;color:var(--muted);font:400 15px/1.8 var(--f-text)">أكبر زيادة من TikTok: مبيعات أكثر بنفس الصرف.</p>
+          </div>
+          <div class="st-panel">
+            <span class="k" style="color:var(--accent);font:500 12px/1 var(--f-ar)">اقتراح · Meta</span>
+            <h3 style="font:700 20px/1.5 var(--f-ar);margin:0">إيقاف إعلان يصرف ٣ أيام بدون ولا ليد</h3>
+            <dl class="st-stats"><div><dt>الصرف</dt><dd>٨٤٠ ر.س</dd></div><div><dt>الليدز</dt><dd>٠</dd></div><div><dt>نسبة النقر</dt><dd>٠٫٤٪</dd></div></dl>
+          </div>
+          <div class="st-panel">
+            <span class="st-chip">بانتظار موافقتك</span>
+            <h3 style="font:700 20px/1.5 var(--f-ar);margin:0">إيقاف إعلان يصرف ٣ أيام بدون ولا ليد</h3>
+            <div class="st-acts"><span class="btn primary">موافقة</span><span class="btn secondary">تعديل</span><span class="btn ghost">رفض</span></div>
+          </div>
+          <div class="st-panel">
+            <span class="st-chip ok">تنفّذ · في السجل</span>
+            <ul><li>إيقاف إعلان · Meta<b>١٢:٠٤</b></li><li>قياس بعد ٣ أيام<b>⏳</b></li><li>درس محفوظ<b>✓</b></li></ul>
+          </div>
+        </div>
+        <div class="st-steps-list">
+          <span class="st-steps-line" data-steps-line aria-hidden="true"></span>
+          <ol style="list-style:none;margin:0;padding:0">
+            {STEPS.map(([n, h, p], i) => <li class="st-step" data-step><p class="n">{`${ar(0)}${ar(i + 1)} · ${n}`}</p><h3>{h}</h3><p>{p}</p></li>)}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="st-hs" id="agents" data-hscroll>
+    <div class="st-hs-in">
+      <div class="st-wrap">
+        <header class="st-head">
+          <span class="kick">الوكلاء</span>
+          <h2>سبعة وكلاء، كل واحد بشغلة واضحة</h2>
+          <p>كلها تشتغل على نفس الأرقام، وكلها تنتظر موافقتك.</p>
+        </header>
+      </div>
+      <div class="st-track" data-track>
+        {AGENTS.map(([g, n, d], i) => <article class="st-agent"><span class="g">{g}</span><h3>{n}</h3><p>{d}</p><span class="ix" aria-hidden="true">{`${ar(0)}${ar(i + 1)}`}</span></article>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="st-sec st-dark" id="safety">
+    <div class="st-wrap">
+      <header class="st-head" data-reveal>
+        <span class="kick">الأمان</span>
+        <h2>قواعد ما تنكسر</h2>
+        <p>النظام يقترح وينفّذ، بس داخل حدود أنت ترسمها.</p>
+      </header>
+      <div class="st-grid four">
+        {RULES.map(([t, d, p]) => <article class="st-tile" data-reveal><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={p}/></svg></span><h3>{t}</h3><p>{d}</p></article>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="st-sec">
+    <div class="st-wrap">
+      <div class="st-faq-wrap">
+      <header class="st-head" data-reveal><span class="kick">أسئلة</span><h2>قبل ما تبدأ</h2><p>ما لقيت سؤالك؟ اكتبه في الطلب تحت ونرد عليك خلال يوم عمل.</p></header>
+      <div class="st-faq">
+        {FAQ.map(([q, a], i) => <details data-reveal name="faq" open={i === 0}><summary>{q}</summary><p>{a}</p></details>)}
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <RequestForm kind="board" title="اربط حساباتك وخل الأرقام تتكلم" lead="اكتب لنا وش عندك من منصات وإنفاق، ونجهّز لك تجربة على أرقامك. كل ربط بتسجيل دخول المنصة نفسها، بدون ملفات تصدير وبدون لصق مفاتيح." />
+</main>
+
+<SiteFooter video={false} line="الأرقام تتكلم. والقرار لك." cta="اطلب تجربة على أرقامك" />
+
+<script is:inline type="module" src="/assets/welcome.js"></script>
+<script>import '../lib/scroll-story'; import '../lib/orb'; import '../lib/pill-cards'; import '../lib/request-form'; import '../lib/demo';</script>
+</body>
+</html>

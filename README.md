@@ -4,8 +4,8 @@
 
 | الصفحة | الرابط | الملف |
 |---|---|---|
-| الرئيسية (لوحة القرارات) | `/` | `src/pages/index.astro` |
-| الأمن السيبراني | `/security/` | `src/pages/security/index.astro` |
+| الرئيسية (لوحة القرارات) | `/` | `src/components/LandingPage.astro` |
+| الأمن السيبراني (موقع مستقل) | https://apipeline-security.leen-b9b.workers.dev | `src/components/SecurityPage.astro` (`npm run build:security` ثم `wrangler deploy --env security`) |
 | بروفايل الشركة (يطبع PDF) | `/profile/` | `src/pages/profile/index.astro` |
 | صندوق الطلبات (بكلمة سر) | `/inbox/` | `src/pages/inbox/index.astro` |
 

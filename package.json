@@ -8,7 +8,8 @@
     "preview": "wrangler dev",
     "typecheck": "astro check && tsc --noEmit",
     "test": "vitest run",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "build:security": "PUBLIC_SITE_MODE=security astro build"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.4",

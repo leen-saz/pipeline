@@ -1,4 +1,4 @@
-// Scroll storytelling for the public pages (/, /profile/, /security/), driven by data attributes so the
+// Scroll storytelling for the public pages (/, /profile/, and the Security site home), driven by data attributes so the
 // pages stay plain HTML. Built on GSAP ScrollTrigger following the vendored skills gsap-scrolltrigger,
 // gsap-performance and scroll-experience (references/sharp_edges.md): transforms and opacity only, one
 // ScrollTrigger per scene, pins only on wide screens, and nothing moves when the reader asked for reduced motion.
