@@ -465,7 +465,7 @@
   --tint:color-mix(in srgb,#C8893F 8%,transparent);
   --tint-2:color-mix(in srgb,#C8893F 14%,transparent);
   --focus:color-mix(in srgb,#C8893F 40%,transparent);
-  --f-display:"Majalla Local","Naskh Web","Inter","General Sans","Thmanyah Sans",system-ui,sans-serif;
+  --f-display:"Milan Display","Inter","General Sans","Thmanyah Sans",system-ui,sans-serif;
   --glass:radial-gradient(120% 70% at 50% 125%,rgba(226,176,114,.30),rgba(200,137,63,.08) 45%,transparent 70%),linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
   --glass-edge:inset 0 0 0 1px rgba(255,255,255,.7),inset 0 -1px 0 rgba(26,26,26,.05),0 24px 60px -18px rgba(60,44,28,.18);
   --shadow-lg:0 30px 70px -20px rgba(60,44,28,.22);
@@ -646,10 +646,7 @@ html.st-static .st-warm::after{animation:none}
   .st-foot .st-wrap{grid-template-columns:1fr;align-items:start}
 }
 
-/* ==== Headings in Sakkal Majalla where the visitor has it (its Microsoft licence forbids serving it as a web font),
-   otherwise Noto Naskh Arabic (SIL OFL, self-hosted, licence in /assets/fonts), the closest free Naskh. */
-@font-face{font-family:"Majalla Local";src:local("Sakkal Majalla"),local("SakkalMajalla");font-weight:400;size-adjust:128%;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
-@font-face{font-family:"Majalla Local";src:local("Sakkal Majalla Bold"),local("SakkalMajalla-Bold");font-weight:700 900;size-adjust:128%;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
-@font-face{font-family:"Naskh Web";src:url(/assets/fonts/noto-naskh-arabic-400.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
-@font-face{font-family:"Naskh Web";src:url(/assets/fonts/noto-naskh-arabic-700.woff2) format("woff2");font-weight:700 900;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
-:root{--f-display:"Majalla Local","Naskh Web","Thmanyah Display","Thmanyah Sans",serif}
+/* ==== Headings in Milan Display Black (Omar Hassan Type; licence bought by Leen). Served as delivered, unmodified.
+   Arabic only: Latin in headings keeps the existing fonts. */
+@font-face{font-family:"Milan Display";src:url(/assets/fonts/MilanDisplay-Black.otf) format("opentype");font-weight:100 900;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+:root{--f-display:"Milan Display","Thmanyah Display","Thmanyah Sans",serif}
