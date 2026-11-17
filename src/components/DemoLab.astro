@@ -43,11 +43,11 @@ const IDEAS = [
           <button class="btn primary" type="button" id="dmPublish" disabled>انشر</button>
         </div>
         <dialog class="dm-dialog" id="dmConfirm" aria-labelledby="dmConfirmH">
-          <h3 id="dmConfirmH">هذا ما سيُنشأ في المنصات</h3>
-          <p class="muted">كل الحملات تنشأ <b>موقوفة</b>، ولا تعمل إلا عندما تشغّلها بنفسك من المنصة.</p>
+          <h3 id="dmConfirmH">هذا ما سيُنشر في المنصات</h3>
+          <p class="muted">تُنشر الحملات في المنصات <b>مباشرة</b> بعد تأكيدك.</p>
           <ul id="dmConfirmList"></ul>
           <p class="dm-note">عرض تجريبي: لا يُنفَّذ شيء فعليًا.</p>
-          <div class="st-acts"><button class="btn primary" type="button" id="dmConfirmOk">تأكيد الإنشاء</button><button class="btn ghost" type="button" id="dmConfirmNo">رجوع</button></div>
+          <div class="st-acts"><button class="btn primary" type="button" id="dmConfirmOk">تأكيد النشر</button><button class="btn ghost" type="button" id="dmConfirmNo">رجوع</button></div>
         </dialog>
       </div>
 
@@ -71,7 +71,23 @@ const IDEAS = [
           <figure class="dm-card">
             <figcaption>الإنفاق والمبيعات يوميًا</figcaption>
             <svg id="dmChart" class="dm-chart" viewBox="0 0 320 140" role="img" aria-label="رسم الإنفاق والمبيعات يوميًا"></svg>
-            <p class="dm-legend"><span class="sw a"></span><span>المبيعات</span> <span class="sw b"></span><span>الصرف</span></p>
+            <p class="dm-legend"><span class="sw a"></span><span>المبيعات</span> <span class="sw b"></span><span>الإنفاق</span></p>
+          </figure>
+          <figure class="dm-card">
+            <figcaption>الأداء حسب المنصة</figcaption>
+            <div class="dm-plat" id="dmPlat"></div>
+          </figure>
+          <figure class="dm-card dm-wide dm-cr">
+            <div class="dm-cr-head">
+              <figcaption>تحليل المواد الإعلانية <small>أي تصميم يحقق نتيجة، وأيها ملّه الجمهور</small></figcaption>
+              <div class="seg" role="group" aria-label="ترتيب المواد" id="dmCrSort">
+                <button type="button" data-sort="roas" aria-pressed="true">العائد</button>
+                <button type="button" data-sort="cpa" aria-pressed="false">تكلفة الطلب</button>
+                <button type="button" data-sort="ctr" aria-pressed="false">نسبة النقر</button>
+              </div>
+            </div>
+            <div class="dm-cr-insight" id="dmCrInsight"></div>
+            <div class="dm-cr-list" id="dmCr"></div>
           </figure>
         </div>
       </div>
