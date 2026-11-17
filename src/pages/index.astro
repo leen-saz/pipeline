@@ -56,7 +56,7 @@ const RULES = [
 const FAQ = [
   ['هل يتنفّذ شي بدون موافقتي؟', 'لا في وضع الموافقة. كل اقتراح يوصلك مع أرقامه وسببه ومخاطرته، وما يتحرك إلا بعد ما توافق. وتقدر تخلي إيجنت معيّن يمشي تلقائيًا داخل حدود تحددها أنت.'],
   ['احلم ينشر الحملة على طول؟', 'لا. ينشئ الحملة في المنصات موقوفة، وما تشتغل إلا لما تشغّلها أنت من المنصة. وقبل الإنشاء يعرض لك كل شي بينشأ.'],
-  ['وش المنصات اللي يقرا منها؟', 'Meta وGoogle Ads وSnapchat وTikTok وGA4، مع X وPinterest وReddit وSearch Console. كل ربط يتم بتسجيل الدخول في المنصة نفسها.'],
+  ['وش المنصات اللي يقرأ منها؟', 'Meta وGoogle Ads وSnapchat وTikTok وGA4، مع X وPinterest وReddit وSearch Console. كل ربط يتم بتسجيل الدخول في المنصة نفسها.'],
   ['وين تنحفظ بياناتي؟', 'بيانات كل شركة معزولة عن غيرها، ومفاتيح الربط محفوظة في خزنة مشفّرة. وتقدر تفك أي ربط بضغطة وتنمسح مفاتيحه.'],
   ['هل يغني عن فريق التسويق؟', 'لا. يختصر على فريقك جمع الأرقام والمتابعة اليومية وتجهيز المواد، ويخلي وقتهم للقرار والإبداع. القرار الأخير دايم عند شخص.'],
 ];
@@ -258,9 +258,11 @@ const FAQ = [
 
   <section class="st-sec" style="padding-top:0">
     <div class="st-wrap">
-      <header class="st-head" data-reveal><span class="kick">أسئلة</span><h2>قبل ما تبدأ</h2></header>
+      <div class="st-faq-wrap">
+      <header class="st-head" data-reveal><span class="kick">أسئلة</span><h2>قبل ما تبدأ</h2><p>ما لقيت سؤالك؟ اكتبه في الطلب تحت ونرد عليك خلال يوم عمل.</p></header>
       <div class="st-faq">
-        {FAQ.map(([q, a]) => <details data-reveal><summary>{q}</summary><p>{a}</p></details>)}
+        {FAQ.map(([q, a], i) => <details data-reveal name="faq" open={i === 0}><summary>{q}</summary><p>{a}</p></details>)}
+      </div>
       </div>
     </div>
   </section>
@@ -268,7 +270,7 @@ const FAQ = [
   <RequestForm kind="board" title="اربط حساباتك وخل الأرقام تتكلم" lead="اكتب لنا وش عندك من منصات وإنفاق، ونجهّز لك تجربة على أرقامك. كل ربط بتسجيل دخول المنصة نفسها، بدون ملفات تصدير وبدون لصق مفاتيح." />
 </main>
 
-<SiteFooter video={false} line="الأرقام تتكلم. والقرار لك." />
+<SiteFooter video={false} line="الأرقام تتكلم. والقرار لك." cta="اطلب تجربة على أرقامك" />
 
 <script is:inline type="module" src="/assets/welcome.js"></script>
 <script>import '../lib/scroll-story'; import '../lib/orb'; import '../lib/pill-cards'; import '../lib/request-form'; import '../lib/demo';</script>

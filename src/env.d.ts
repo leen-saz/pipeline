@@ -4,5 +4,8 @@ declare namespace Cloudflare {
     INBOX_PASSWORD?: string;
     REQUESTS_WEBHOOK?: string;
     IP_SALT?: string;
+    REQUESTS_EMAIL_TO?: string;
+    RESEND_API_KEY?: string;
+    MAIL_FROM?: string;
   }
 }

@@ -9,10 +9,13 @@
 import { json, readJson, sameOrigin, type SiteEnv } from './http';
 import { recentCount, insertRequest, listRows, setStatus, deleteRow, missingTable } from './store';
 import { cleanRequest, ipKey, LIMIT_PER_HOUR, KIND_AR, type SiteRequest } from './site-request';
+import { mailRequest } from './mail';
 
 const STATUSES = ['new', 'contacted', 'closed'];
 const NOT_APPLIED = 'جدول الطلبات ما انضاف بعد: شغّل npx wrangler d1 migrations apply apipeline-site --remote';
 const OFF = 'قاعدة الطلبات غير مربوطة';
+const PAUSED = 'الإرسال متوقف مؤقتًا، جرّب بعد شوي';
+const FAILED = 'ما قدرنا نرسل طلبك الحين، جرّب بعد شوي';
 
 async function notify(hook: string | undefined, r: SiteRequest, origin: string) {
   if (!hook || !/^https:\/\//.test(hook)) return;
@@ -21,26 +24,33 @@ async function notify(hook: string | undefined, r: SiteRequest, origin: string) 
     .catch(() => { console.warn('site_request_notify_failed'); });
 }
 
+// The request is emailed to the owner and kept in D1 (the inbox). It counts as sent when either one worked.
 export async function submitRequest(req: Request, e: SiteEnv): Promise<Response> {
   const db = e.DB;
-  if (!db || !e.IP_SALT) return json(503, { error: 'الإرسال متوقف مؤقتًا، تواصل معنا واتساب' });
+  if ((!db || !e.IP_SALT) && !e.REQUESTS_EMAIL_TO) return json(503, { error: PAUSED });
   if (!sameOrigin(req)) return json(403, { error: 'طلب مرفوض' });
   let body: Record<string, unknown>;
   try { body = await readJson(req, 6000); } catch { return json(400, { error: 'الطلب غير صالح' }); }
   const c = cleanRequest(body);
   if (!c.ok && 'bot' in c) return json(200, { ok: true });
   if (!c.ok) return json(400, { error: 'راجع الحقول المظللة', fields: c.errors });
-  const key = await ipKey(req.headers.get('cf-connecting-ip') || 'unknown', e.IP_SALT);
-  try {
-    if (await recentCount(db, key, new Date(Date.now() - 3600_000).toISOString()) >= LIMIT_PER_HOUR) return json(429, { error: 'وصلنا طلبك قبل شوي. بنتواصل معك قريب' });
-    await insertRequest(db, c.data, new Date().toISOString(), key);
-  } catch (err) {
-    console.error('site_request_store_failed', JSON.stringify({ missing: missingTable(err) }));
-    return json(503, { error: 'ما قدرنا نحفظ الطلب الحين، تواصل معنا واتساب' });
+  let stored = false;
+  if (db && e.IP_SALT) {
+    const key = await ipKey(req.headers.get('cf-connecting-ip') || 'unknown', e.IP_SALT);
+    try {
+      if (await recentCount(db, key, new Date(Date.now() - 3600_000).toISOString()) >= LIMIT_PER_HOUR) return json(429, { error: 'وصلنا طلبك قبل شوي. بنتواصل معك قريب' });
+      await insertRequest(db, c.data, new Date().toISOString(), key);
+      stored = true;
+    } catch (err) {
+      console.error('site_request_store_failed', JSON.stringify({ missing: missingTable(err) }));
+    }
   }
+  const origin = new URL(req.url).origin;
+  const mailed = await mailRequest(e, c.data, origin);
+  if (!stored && !mailed) return json(503, { error: FAILED });
   // What was asked, never who asked: the log is not a place for phone numbers
-  console.log(JSON.stringify({ event: 'site_request', kind: c.data.kind, page: c.data.page, scope: c.data.scope.length }));
-  await notify(e.REQUESTS_WEBHOOK, c.data, new URL(req.url).origin);
+  console.log(JSON.stringify({ event: 'site_request', kind: c.data.kind, page: c.data.page, scope: c.data.scope.length, stored, mailed }));
+  await notify(e.REQUESTS_WEBHOOK, c.data, origin);
   return json(200, { ok: true });
 }
 

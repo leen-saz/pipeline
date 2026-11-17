@@ -11,6 +11,7 @@ export const SITE_EN = {
   'الأرقام تتكلم.': 'The numbers talk.', 'والقرار لك.': 'The call is yours.',
   'الأرقام في الأمثلة بيانات تجريبية.': 'Numbers in the examples are demo data.',
   'المراجع: مطابق لقواعدك': 'Reviewer: matches your rules',
+  'اطلب تجربة على أرقامك': 'Get a trial on your numbers', 'ما لقيت سؤالك؟ اكتبه في الطلب تحت ونرد عليك خلال يوم عمل.': 'Question not here? Add it to the request below and we reply within a working day.', 'وش المنصات اللي يقرأ منها؟': 'Which platforms does it read?',
   'الصرف في Meta، والليدز في ملف إكسل، والمبيعات في واتساب. كل منصة تقول قصة، وما أحد يقول لك وش تسوي بكرة الصبح. Apipeline يجمعها في لوحة وحدة، ويحط القرار قدامك.':
     'Spend lives in Meta, leads in a spreadsheet, sales in WhatsApp. Every platform tells a story, and nobody tells you what to do tomorrow morning. Apipeline puts it on one board and puts the decision in front of you.',
   'آخر مزامنة الآن': 'Last sync just now',
@@ -157,9 +158,9 @@ export const SITE_EN = {
   'اختر وش تحتاج: تجربة اللوحة، أو خريطة التسرب لإعلاناتك، أو فحص أمني لمنتجك. ونرد عليك خلال يوم عمل.': 'Pick what you need: a board trial, a Leak Map for your ads, or a security audit for your product. We reply within one working day.',
   'اكتب اسمك': 'Enter your name', 'اكتب رقم جوال صحيح، مثل ٠٥٠١٢٣٤٥٦٧': 'Enter a valid mobile number, e.g. 0501234567', 'اكتب رقم جوال صحيح، مثل 0501234567': 'Enter a valid mobile number, e.g. 0501234567',
   'الإيميل غير صحيح': 'That email doesn\'t look right', 'نحتاج موافقتك عشان نتواصل معك': 'We need your consent to contact you', 'راجع الحقول المظللة': 'Check the highlighted fields',
-  'الإرسال متوقف مؤقتًا، تواصل معنا واتساب': 'Sending is paused for now; reach us on WhatsApp', 'الطلب غير صالح': 'Invalid request',
+  'الإرسال متوقف مؤقتًا، جرّب بعد شوي': 'Sending is paused for now; please try again shortly', 'الطلب غير صالح': 'Invalid request',
   'وصلنا طلبك قبل شوي. بنتواصل معك قريب': 'We got your request a moment ago. We\'ll be in touch soon',
-  'ما قدرنا نحفظ الطلب الحين، تواصل معنا واتساب': 'We couldn\'t save the request right now; reach us on WhatsApp',
+  'ما قدرنا نرسل طلبك الحين، جرّب بعد شوي': 'We couldn\'t send your request right now; please try again shortly',
   'ما وصل الطلب. تأكد من الاتصال وجرّب مرة ثانية': 'The request didn\'t go through. Check your connection and try again',
 
   // Cinematic hero and footer lines
