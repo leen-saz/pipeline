@@ -1,6 +1,7 @@
 // The landing page demo (src/components/DemoLab.astro): fake data only, nothing leaves the browser.
 // Arabic strings are written here; i18n.js translates them on the fly for English (pairs in public/assets/i18n-en-site.js).
 const $ = <T = HTMLElement>(s: string, r: Document | Element = document) => r.querySelector(s) as T | null;
+import { bump } from './demo-pages';
 const $$ = <T = HTMLElement>(s: string, r: Document | Element = document) => [...r.querySelectorAll(s)] as T[];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
@@ -16,13 +17,14 @@ function tabs() {
       t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
       const p = document.getElementById(t.getAttribute('aria-controls')!); if (p) p.hidden = !on;
     }
+    const crumb = $('#dmCrumb'); if (crumb) crumb.textContent = $('.dm-tl', b)?.textContent ?? b.textContent;
     if (focus) b.focus();
   };
   list.forEach((b, i) => {
     b.addEventListener('click', () => show(b));
     b.addEventListener('keydown', e => {
       const rtl = document.documentElement.dir !== 'ltr';
-      const next = e.key === (rtl ? 'ArrowLeft' : 'ArrowRight'), prev = e.key === (rtl ? 'ArrowRight' : 'ArrowLeft');
+      const next = e.key === 'ArrowDown' || e.key === (rtl ? 'ArrowLeft' : 'ArrowRight'), prev = e.key === 'ArrowUp' || e.key === (rtl ? 'ArrowRight' : 'ArrowLeft');
       if (!next && !prev && e.key !== 'Home' && e.key !== 'End') return;
       e.preventDefault();
       const j = e.key === 'Home' ? 0 : e.key === 'End' ? list.length - 1 : (i + (next ? 1 : -1) + list.length) % list.length;
@@ -381,6 +383,7 @@ function buyer() {
     const b = (e.target as Element).closest<HTMLButtonElement>('[data-act]'); if (!b) return;
     const el = b.closest<HTMLElement>('.dm-rec')!, r = RECS[Number(el.dataset.i)]!;
     const done = (cls: string, word: string, msg: string) => { el.classList.add(cls); $$<HTMLButtonElement>('button', el).forEach(x => (x.disabled = true)); $('.st-acts', el)!.insertAdjacentHTML('beforeend', `<span class="st-chip ${cls === 'ok' ? 'ok' : 'hot'}">${word}</span>`); add(msg); };
+    if (b.dataset.act !== 'no') bump('buyer', -1);
     if (b.dataset.act === 'ok') done('ok', 'معتمد', `<span>اعتمدت:</span> <span>${esc(r.t)}</span> · <span>${r.plat}</span>. <span>يُقاس بعد ٣ و٧ أيام.</span>`);
     else if (b.dataset.act === 'no') { const f = $('.dm-reject', el)!; f.hidden = !f.hidden; if (!f.hidden) $<HTMLSelectElement>('select', f)!.focus(); }
     else done('no', 'مرفوض', `<span>رفضت:</span> <span>${esc(r.t)}</span> · <span>السبب:</span> <span>${esc($<HTMLSelectElement>('select', el)!.value)}</span>. <span>يُحفظ درسًا مستفادًا.</span>`);
