@@ -1,8 +1,5 @@
 ---
 export const prerender = true;
-// The home page of whichever site this build is for (src/lib/public-site.ts SITE_MODE).
 import LandingPage from '../components/LandingPage.astro';
-import SecurityPage from '../components/SecurityPage.astro';
-import { SITE_MODE } from '../lib/public-site';
 ---
-{SITE_MODE === 'security' ? <SecurityPage /> : <LandingPage />}
+<LandingPage />

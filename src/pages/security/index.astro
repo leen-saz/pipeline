@@ -1,6 +1,5 @@
 ---
 export const prerender = true;
-// Security moved to its own link; old /security/ links land there (and on its own site, on its home page).
-import { SITE_MODE, SECURITY_URL } from '../../lib/public-site';
-return Astro.redirect(SITE_MODE === 'security' ? '/' : `${SECURITY_URL}/`, 301);
+// The cybersecurity pages were removed (Leen, 2026-11): old /security/ links land on the home page.
+return Astro.redirect('/', 301);
 ---

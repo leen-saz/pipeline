@@ -31,7 +31,7 @@ let SQL: ReturnType<typeof d1>['sql'];
 beforeEach(() => { const x = d1(); SQL = x.sql; E = { DB: x.db, IP_SALT: 'salt', INBOX_PASSWORD: 'open-sesame' }; });
 const rows = () => SQL.prepare('select * from site_requests order by id').all();
 const SITE = 'https://apipeline.example';
-const good = { kind: 'security', name: 'سارة', company: 'شركة تجربة', email: 'Test@Example.com', scope: ['web', 'nope', 'web'], message: 'نبي فحص', consent: true, page: '/security/', lang: 'ar', t: 9000 };
+const good = { kind: 'leakmap', name: 'سارة', company: 'شركة تجربة', email: 'Test@Example.com', message: 'نبي نعرف وين يضيع العميل', consent: true, page: '/profile/', lang: 'ar', t: 9000 };
 
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
@@ -41,8 +41,12 @@ describe('request fields', () => {
     expect(phone('+971501234567')).toBe('+971501234567');
     for (const v of ['0401234567', '05012345', 'abc', '', '+966401234567']) expect(phone(v)).toBeNull();
   });
-  it('a good request is cleaned: email lowercased, scope deduped and limited to known values', () => {
-    expect(cleanRequest(good)).toEqual({ ok: true, data: { kind: 'security', name: 'سارة', company: 'شركة تجربة', phone: null, email: 'test@example.com', scope: ['web'], message: 'نبي فحص', page: '/security/', lang: 'ar' } });
+  it('a good request is cleaned: email lowercased, no scope', () => {
+    expect(cleanRequest(good)).toEqual({ ok: true, data: { kind: 'leakmap', name: 'سارة', company: 'شركة تجربة', phone: null, email: 'test@example.com', scope: [], message: 'نبي نعرف وين يضيع العميل', page: '/profile/', lang: 'ar' } });
+  });
+  it('the removed security audits fall back: their kind becomes other, their scope and page are dropped', () => {
+    const c = cleanRequest({ ...good, kind: 'security', scope: ['web'], page: '/security/' });
+    expect(c.ok && c.data).toMatchObject({ kind: 'other', scope: [], page: '/' });
   });
   it('the home page is "/", and unknown kinds and pages fall back', () => {
     expect(cleanRequest({ ...good, page: '/' })).toMatchObject({ ok: true, data: { page: '/' } });
@@ -80,7 +84,7 @@ describe('POST /api/request', () => {
     const log = quiet();
     expect((await send(good)).status).toBe(200);
     const [row] = rows();
-    expect(row).toMatchObject({ kind: 'security', phone: null, email: 'test@example.com', scope: '["web"]', status: 'new', page: '/security/' });
+    expect(row).toMatchObject({ kind: 'leakmap', phone: null, email: 'test@example.com', scope: '[]', status: 'new', page: '/profile/' });
     expect(String(row!.consent_at)).toMatch(/^\d{4}-\d\d-\d\dT/);
     expect(String(row!.at)).toMatch(/^\d{4}-\d\d-\d\dT.*Z$/);
     expect(row!.ip_key).toMatch(/^[0-9a-f]{32}$/);
@@ -139,7 +143,7 @@ describe('POST /api/request', () => {
     vi.stubGlobal('fetch', async (u: string, init: RequestInit) => { seen.push({ url: String(u), body: String(init.body) }); return new Response(null, { status: 204 }); });
     await send(good, {}, { ...E, REQUESTS_WEBHOOK: 'https://hooks.example/abc' });
     const hook = seen.find(s => s.url === 'https://hooks.example/abc')!;
-    expect(JSON.parse(hook.body).text).toContain('فحص أمني');
+    expect(JSON.parse(hook.body).text).toContain('خريطة التسرب');
     expect(JSON.parse(hook.body).text).toContain(`${SITE}/inbox/`);
     expect(hook.body).not.toMatch(/9665|example\.com|0501/);
   });
@@ -150,8 +154,8 @@ describe('/api/requests (inbox)', () => {
     quiet();
     await send(good); await send({ ...good, kind: 'board', page: '/' }, { 'cf-connecting-ip': '198.51.100.7' });
     const all = await (await listRequests(inbox('GET'), E)).json() as { requests: { id: number; kind: string; scope: string[] }[] };
-    expect(all.requests.map(r => r.kind)).toEqual(['board', 'security']);
-    expect(all.requests[1]!.scope).toEqual(['web']);
+    expect(all.requests.map(r => r.kind)).toEqual(['board', 'leakmap']);
+    expect(all.requests[1]!.scope).toEqual([]);
     const id = all.requests[1]!.id;
     expect((await updateRequest(inbox('PATCH', { id, status: 'contacted' }), E)).status).toBe(200);
     expect(rows().find(r => r.id === id)).toMatchObject({ status: 'contacted' });

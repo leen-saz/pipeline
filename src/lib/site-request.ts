@@ -1,9 +1,8 @@
 // What a visitor sends from the public request form (src/components/RequestForm.astro), checked field by field.
 // Pure functions, shared by the route (src/pages/api/request.ts) and the tests. Errors are keyed by field so the form
 // can show each one next to its box.
-export const KINDS = ['board', 'leakmap', 'security', 'other'] as const;
+export const KINDS = ['board', 'leakmap', 'other'] as const;
 export type Kind = typeof KINDS[number];
-export const SCOPES = ['code', 'web', 'mobile', 'cloud'] as const;
 export const LIMIT_PER_HOUR = 3;
 // A person needs a few seconds to fill the form; a script posting straight away does not
 export const MIN_FILL_MS = 2500;
@@ -46,10 +45,11 @@ export function cleanRequest(b: Record<string, unknown>): Cleaned {
   if (rawPhone && !ph) errors.phone = 'اكتب رقم جوال صحيح، مثل ٠٥٠١٢٣٤٥٦٧';
   const em = email(b.email);
   if (!em) errors.email = 'اكتب إيميلًا صحيحًا';
-  const scope = kind === 'security' && Array.isArray(b.scope) ? [...new Set(b.scope.map(String).filter(s => (SCOPES as readonly string[]).includes(s)))] : [];
+  // scope belonged to the security audits, which were removed: kept empty so stored rows keep their shape
+  const scope: string[] = [];
   const message = text(b.message, 1500) || null;
   if (b.consent !== true) errors.consent = 'نحتاج موافقتك للتواصل معك';
-  const page = /^\/(security\/|profile\/)?$/.test(String(b.page)) ? String(b.page) : '/';
+  const page = /^\/(profile\/)?$/.test(String(b.page)) ? String(b.page) : '/';
   const lang = b.lang === 'en' ? 'en' : 'ar';
   if (Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, data: { kind, name, company, phone: ph, email: em!, scope, message, page, lang } };
@@ -63,4 +63,4 @@ export async function ipKey(ip: string, secret: string, day = new Date().toISOSt
   return [...sig.slice(0, 16)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
-export const KIND_AR: Record<Kind, string> = { board: 'لوحة Apipeline', leakmap: 'خريطة التسرب', security: 'فحص أمني', other: 'استفسار' };
+export const KIND_AR: Record<Kind, string> = { board: 'لوحة Apipeline', leakmap: 'خريطة التسرب', other: 'استفسار' };

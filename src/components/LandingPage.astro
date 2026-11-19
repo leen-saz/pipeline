@@ -10,6 +10,7 @@ import PillCards from './PillCards.astro';
 import DemoLab from './DemoLab.astro';
 
 const ar = (n: number) => n.toLocaleString('ar-SA');
+const LOGO_NAMES: Record<string, string> = { meta: 'Meta', googleads: 'Google Ads', snapchat: 'Snapchat', tiktok: 'TikTok', googleanalytics: 'Google Analytics', x: 'X', pinterest: 'Pinterest', reddit: 'Reddit', googlesearchconsole: 'Search Console', posthog: 'PostHog' };
 const LOGOS = ['meta', 'googleads', 'snapchat', 'tiktok', 'googleanalytics', 'x', 'pinterest', 'reddit', 'googlesearchconsole', 'posthog'];
 
 // Pill cards rows (src/components/PillCards.astro): the agents, the platforms, the loop, the numbers
@@ -73,8 +74,9 @@ const FAQ = [
 <link rel="preload" href="/assets/fonts/playfair-display-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/app.css">
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/system.css">
 </head>
-<body class="st st-night st-warm">
+<body class="st st-night st-warm st-z">
 
 <SiteHeader current="/" cta={{ href: '#request', label: 'تواصل معنا' }} />
 
@@ -89,6 +91,8 @@ const FAQ = [
       </div>
       <p class="st-note">الأرقام في الأمثلة بيانات تجريبية.</p>
   </OrbHero>
+
+  <DemoLab />
 
   <PillCards
     label="مراحل العرض"
@@ -107,6 +111,9 @@ const FAQ = [
     <div class="st-marquee" aria-hidden="true">
       {[...LOGOS, ...LOGOS].map(l => <span style={`--src:url(/assets/logos/${l}.svg)`}></span>)}
     </div>
+    <ul class="z-logos" role="list">
+      {LOGOS.map(l => <li><span class="z-logo" style={`--src:url(/assets/logos/${l}.svg)`} role="img" aria-label={LOGO_NAMES[l]}></span></li>)}
+    </ul>
   </section>
 
   <section class="st-words-sec">
@@ -115,7 +122,7 @@ const FAQ = [
     </div>
   </section>
 
-  <section class="st-sec" id="outcome" style="padding-top:0">
+  <section class="st-sec" id="outcome">
     <div class="st-wrap">
       <header class="st-head" data-reveal>
         <span class="kick">ما الذي يتغيّر</span>
@@ -127,9 +134,7 @@ const FAQ = [
     </div>
   </section>
 
-  <DemoLab />
-
-  <section class="st-sec" id="how" style="padding-top:0">
+  <section class="st-sec" id="how">
     <div class="st-wrap">
       <header class="st-head" data-reveal>
         <span class="kick">كيف يشتغل</span>
@@ -202,7 +207,7 @@ const FAQ = [
     </div>
   </section>
 
-  <section class="st-sec">
+  <section class="st-sec" id="faq">
     <div class="st-wrap">
       <div class="st-faq-wrap">
       <header class="st-head" data-reveal><span class="kick">أسئلة</span><h2>قبل أن تبدأ</h2><p>لم تجد سؤالك؟ اكتبه في نموذج الطلب، ونرد عليك خلال يوم عمل.</p></header>

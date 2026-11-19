@@ -1,17 +1,28 @@
 ---
-// Header for the public pages: wordmark, page links, language switch, one action. A thin bar under it fills as you scroll.
-import { NAV } from '../lib/public-site';
+// Header for the public pages: a thin announcement bar that scrolls away, then the sticky header with the wordmark,
+// the section links, the language switch and one action. Under 900px the links fold into a menu (a <details>, no JS).
+// A thin bar under the header fills as you scroll. Links and the announcement live in src/lib/public-site.ts.
+import { NAV, ANNOUNCEMENT } from '../lib/public-site';
 interface Props { current: string; cta: { href: string; label: string }; dark?: boolean }
 const { current, cta, dark = false } = Astro.props;
 ---
+{ANNOUNCEMENT && (
+  <p class="z-announce"><a href={ANNOUNCEMENT.href}>{ANNOUNCEMENT.text}<span aria-hidden="true"> ←</span></a></p>
+)}
 <header class:list={['st-top', { dark }]}>
   <div class="st-wrap">
     <a class="mark" href="/" aria-label="Apipeline">Apipeline</a>
-    <nav aria-label="صفحات Apipeline">
+    <nav class="z-nav" aria-label="صفحات Apipeline">
       {NAV.map(n => <a href={n.href} aria-current={n.href === current ? 'page' : undefined}>{n.label}</a>)}
     </nav>
     <span id="lang"></span>
     <a class="btn sm primary" href={cta.href}>{cta.label}</a>
+    <details class="z-menu">
+      <summary aria-label="القائمة"><span aria-hidden="true"></span></summary>
+      <nav aria-label="صفحات Apipeline">
+        {NAV.map(n => <a href={n.href} aria-current={n.href === current ? 'page' : undefined}>{n.label}</a>)}
+      </nav>
+    </details>
   </div>
   <span class="st-progress" data-progress aria-hidden="true"></span>
 </header>

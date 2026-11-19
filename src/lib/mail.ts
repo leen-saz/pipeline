@@ -6,12 +6,10 @@ import { KIND_AR, type SiteRequest } from './site-request';
 
 export interface MailEnv { REQUESTS_EMAIL_TO?: string; RESEND_API_KEY?: string; MAIL_FROM?: string }
 
-const SCOPE_AR: Record<string, string> = { code: 'الكود', web: 'الموقع والـ API', mobile: 'تطبيق الجوال', cloud: 'السحابة والإعدادات' };
-
 export function requestLines(r: SiteRequest): [string, string][] {
   const rows: [string, string | null][] = [
     ['الطلب', KIND_AR[r.kind]], ['الاسم', r.name], ['الشركة', r.company], ['الجوال', r.phone], ['الإيميل', r.email],
-    ['ما نفحصه', r.scope.length ? r.scope.map(s => SCOPE_AR[s] ?? s).join('، ') : null], ['الرسالة', r.message],
+    ['الرسالة', r.message],
     ['الصفحة', r.page], ['اللغة', r.lang === 'en' ? 'English' : 'عربي'],
   ];
   return rows.filter((x): x is [string, string] => !!x[1]);
