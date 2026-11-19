@@ -27,13 +27,14 @@ async function notify(hook: string | undefined, r: SiteRequest, origin: string) 
 // The request is emailed to the owner and kept in D1 (the inbox). It counts as sent when either one worked.
 export async function submitRequest(req: Request, e: SiteEnv): Promise<Response> {
   const db = e.DB;
-  if ((!db || !e.IP_SALT) && !e.REQUESTS_EMAIL_TO) return json(503, { error: PAUSED });
   if (!sameOrigin(req)) return json(403, { error: 'طلب مرفوض' });
   let body: Record<string, unknown>;
   try { body = await readJson(req, 6000); } catch { return json(400, { error: 'الطلب غير صالح' }); }
   const c = cleanRequest(body);
   if (!c.ok && 'bot' in c) return json(200, { ok: true });
   if (!c.ok) return json(400, { error: 'راجع الحقول المظللة', fields: c.errors });
+  // Field errors first, so the visitor can fix the form even while sending is off
+  if ((!db || !e.IP_SALT) && !e.REQUESTS_EMAIL_TO) return json(503, { error: PAUSED });
   let stored = false;
   if (db && e.IP_SALT) {
     const key = await ipKey(req.headers.get('cf-connecting-ip') || 'unknown', e.IP_SALT);

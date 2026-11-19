@@ -59,5 +59,20 @@ export function langSwitch() {
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-lang]'); if (!b || b.dataset.lang === LANG) return;
   try { localStorage.setItem(KEY, b.dataset.lang); } catch {}
+  try { const t = document.querySelector('.dm-tabs [aria-selected=true]'); sessionStorage.setItem('apipeline-restore', JSON.stringify({ y: scrollY, tab: t ? t.id : null, path: location.pathname })); } catch {}
   const u = new URL(location.href); u.searchParams.delete('lang'); if (b.dataset.lang === 'en') u.searchParams.set('lang', 'en'); location.href = u.toString();
 });
+
+// After a language switch: back to the same place on the page, with the same demo section open
+try {
+  const r = JSON.parse(sessionStorage.getItem('apipeline-restore') || 'null');
+  if (r && r.path === location.pathname) {
+    sessionStorage.removeItem('apipeline-restore');
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const go = () => setTimeout(() => {
+      if (r.tab) document.getElementById(r.tab)?.click();
+      scrollTo({ top: r.y, behavior: 'instant' });
+    }, 60);
+    if (document.readyState === 'complete') go(); else addEventListener('load', go);
+  }
+} catch {}

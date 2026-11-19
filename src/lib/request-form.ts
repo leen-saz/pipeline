@@ -41,7 +41,7 @@ if (form) {
     msg.textContent = '';
     btn.disabled = true; btn.classList.add('loading');
     const body = {
-      kind: kind.value, name: val('name'), company: val('company'), phone: val('phone'), email: val('email'), message: val('message'),
+      kind: kind.value, name: val('name'), company: val('company'), email: val('email'), message: val('message'),
       website: val('website'), consent: (form.elements.namedItem('consent') as HTMLInputElement).checked,
       scope: [...form.querySelectorAll<HTMLInputElement>('input[name="scope"]:checked')].map(x => x.value),
       page: location.pathname, lang: document.documentElement.lang === 'en' ? 'en' : 'ar', t: Math.round(performance.now() - shown),
