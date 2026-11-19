@@ -82,8 +82,12 @@ async function mailFromBrowser(to: string, b: Record<string, unknown>, form: HTM
   const scope = [...form.querySelectorAll<HTMLInputElement>('input[name="scope"]:checked')].map(x => x.parentElement?.textContent?.trim() ?? x.value);
   if (scope.length) fields['ما نفحصه'] = scope.join('، ');
   try {
-    const r = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(fields) });
+    // The pages send no referrer (<meta name="referrer" content="no-referrer">), but FormSubmit refuses a submission that
+    // does not say which site it came from, so this one request sends the origin only
+    const r = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, { method: 'POST', referrerPolicy: 'strict-origin', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(fields) });
     const j = await r.json().catch(() => ({})) as { success?: string | boolean; message?: string };
-    return r.ok && (String(j.success) === 'true' || /activat/i.test(j.message ?? ''));
+    const ok = r.ok && (String(j.success) === 'true' || /activat/i.test(j.message ?? ''));
+    if (!ok) console.warn('formsubmit', r.status, j.message ?? '');
+    return ok;
   } catch { return false; }
 }
