@@ -650,4 +650,10 @@ export const SITE_EN = {
   "المنصات": "Platforms",
   "أقسام النظام": "App sections",
   "النظام كاملًا كما يراه عملاؤنا: كل الأقسام تعمل ببيانات افتراضية داخل متصفحك فقط، دون تسجيل.": "The whole system as our customers see it: every section works with sample data, only in your browser, no sign-up.",
+  "رفع ميزانية «روتين الصباح» ٢٠٪": "Raise the “Morning routine” budget by 20%",
+  "رفع ميزانية «روتين الصباح» 20%": "Raise the “Morning routine” budget by 20%",
+  "رفع الميزانية · TikTok": "Budget raised · TikTok",
+  "اقتراح · TikTok": "Suggestion · TikTok",
+  "اكتب إيميلًا صحيحًا": "Enter a valid email",
+  "سنرد عليك على إيميلك خلال يوم عمل.": "We'll reply to your email within a working day.",
 };

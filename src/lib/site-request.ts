@@ -9,7 +9,7 @@ export const LIMIT_PER_HOUR = 3;
 export const MIN_FILL_MS = 2500;
 
 export interface SiteRequest {
-  kind: Kind; name: string; company: string | null; phone: string; email: string | null;
+  kind: Kind; name: string; company: string | null; phone: string | null; email: string;
   scope: string[]; message: string | null; page: string; lang: 'ar' | 'en';
 }
 export type Cleaned = { ok: true; data: SiteRequest } | { ok: false; errors: Record<string, string> } | { ok: false; bot: true };
@@ -40,18 +40,19 @@ export function cleanRequest(b: Record<string, unknown>): Cleaned {
   const name = text(b.name, 80);
   if (name.length < 2) errors.name = 'اكتب اسمك';
   const company = text(b.company, 120) || null;
-  const ph = phone(b.phone);
-  if (!ph) errors.phone = 'اكتب رقم جوال صحيح، مثل ٠٥٠١٢٣٤٥٦٧';
-  const rawEmail = String(b.email ?? '').trim();
-  const em = rawEmail ? email(rawEmail) : null;
-  if (rawEmail && !em) errors.email = 'الإيميل غير صحيح';
+  // The form asks for an email only; a phone sent by an older page is still accepted when it is valid
+  const rawPhone = String(b.phone ?? '').trim();
+  const ph = rawPhone ? phone(rawPhone) : null;
+  if (rawPhone && !ph) errors.phone = 'اكتب رقم جوال صحيح، مثل ٠٥٠١٢٣٤٥٦٧';
+  const em = email(b.email);
+  if (!em) errors.email = 'اكتب إيميلًا صحيحًا';
   const scope = kind === 'security' && Array.isArray(b.scope) ? [...new Set(b.scope.map(String).filter(s => (SCOPES as readonly string[]).includes(s)))] : [];
   const message = text(b.message, 1500) || null;
   if (b.consent !== true) errors.consent = 'نحتاج موافقتك للتواصل معك';
   const page = /^\/(security\/|profile\/)?$/.test(String(b.page)) ? String(b.page) : '/';
   const lang = b.lang === 'en' ? 'en' : 'ar';
   if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, data: { kind, name, company, phone: ph!, email: em, scope, message, page, lang } };
+  return { ok: true, data: { kind, name, company, phone: ph, email: em!, scope, message, page, lang } };
 }
 
 // The visitor's address is never stored: a keyed hash of it and today's date, so it cannot be reversed or followed

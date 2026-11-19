@@ -41,14 +41,18 @@ if (form) {
     msg.textContent = '';
     btn.disabled = true; btn.classList.add('loading');
     const body = {
-      kind: kind.value, name: val('name'), company: val('company'), phone: val('phone'), email: val('email'), message: val('message'),
+      kind: kind.value, name: val('name'), company: val('company'), email: val('email'), message: val('message'),
       website: val('website'), consent: (form.elements.namedItem('consent') as HTMLInputElement).checked,
       scope: [...form.querySelectorAll<HTMLInputElement>('input[name="scope"]:checked')].map(x => x.value),
       page: location.pathname, lang: document.documentElement.lang === 'en' ? 'en' : 'ar', t: Math.round(performance.now() - shown),
     };
     try {
       const r = await fetch('/api/request', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-      const j = await r.json().catch(() => ({})) as { ok?: boolean; error?: string; fields?: Record<string, string> };
+      const j = await r.json().catch(() => ({})) as { ok?: boolean; stored?: boolean; mailed?: boolean; error?: string; fields?: Record<string, string> };
+      if (r.ok && j.ok && !j.mailed && form.dataset.mailTo) {
+        const sent = await mailFromBrowser(form.dataset.mailTo, body, form);
+        if (!sent && !j.stored) { msg.textContent = 'تعذّر إرسال طلبك الآن، حاول بعد قليل'; return; }
+      }
       if (r.ok && j.ok) {
         form.querySelector<HTMLElement>('.st-fields')!.hidden = true;
         form.querySelector<HTMLElement>('.st-form-bar')!.hidden = true;
@@ -63,4 +67,23 @@ if (form) {
       btn.disabled = false; btn.classList.remove('loading');
     }
   });
+}
+
+// FormSubmit (formsubmit.co) emails the owner. It takes submissions from browsers only, so the page sends it here.
+// The first submission makes FormSubmit ask the owner to press «Activate» once; it counts as sent.
+const KIND_LABEL: Record<string, string> = { board: 'تجربة لوحة Apipeline', leakmap: 'خريطة التسرب', security: 'فحص أمني', other: 'استفسار آخر' };
+async function mailFromBrowser(to: string, b: Record<string, unknown>, form: HTMLFormElement): Promise<boolean> {
+  const fields: Record<string, string> = {
+    _subject: `طلب جديد من موقع Apipeline: ${KIND_LABEL[String(b.kind)] ?? ''}${b.company ? ` · ${b.company}` : ''}`,
+    _template: 'table', _captcha: 'false', _replyto: String(b.email ?? ''),
+    'الطلب': KIND_LABEL[String(b.kind)] ?? String(b.kind), 'الاسم': String(b.name ?? ''), 'الشركة': String(b.company || '—'),
+    'الإيميل': String(b.email ?? ''), 'الرسالة': String(b.message || '—'), 'الصفحة': location.origin + String(b.page ?? '/'),
+  };
+  const scope = [...form.querySelectorAll<HTMLInputElement>('input[name="scope"]:checked')].map(x => x.parentElement?.textContent?.trim() ?? x.value);
+  if (scope.length) fields['ما نفحصه'] = scope.join('، ');
+  try {
+    const r = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(fields) });
+    const j = await r.json().catch(() => ({})) as { success?: string | boolean; message?: string };
+    return r.ok && (String(j.success) === 'true' || /activat/i.test(j.message ?? ''));
+  } catch { return false; }
 }

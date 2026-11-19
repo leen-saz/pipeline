@@ -4,7 +4,7 @@ const KIND: Record<string, string> = { board: 'تجربة اللوحة', leakmap
 const SCOPE: Record<string, string> = { code: 'الكود', web: 'الموقع والـ API', mobile: 'تطبيق الجوال', cloud: 'السحابة والإعدادات' };
 const STATUS: Record<string, string> = { new: 'جديد', contacted: 'تواصلنا', closed: 'مقفل' };
 
-interface Req { id: number; at: string; kind: string; name: string; company: string | null; phone: string; email: string | null; scope: string[]; message: string | null; page: string; status: string }
+interface Req { id: number; at: string; kind: string; name: string; company: string | null; phone: string | null; email: string | null; scope: string[]; message: string | null; page: string; status: string }
 
 const list = document.getElementById('rq-list')!;
 const msg = document.getElementById('msg')!;
@@ -36,7 +36,7 @@ function card(r: Req): HTMLElement {
   head.appendChild(el('time', { class: 'muted', datetime: r.at }, new Date(r.at).toLocaleString(en() ? 'en-GB' : 'ar-SA', { dateStyle: 'medium', timeStyle: 'short' })));
   a.appendChild(head);
   const meta = el('div', { class: 'rq-meta' });
-  meta.appendChild(el('a', { href: `https://wa.me/${r.phone.replace(/^\+/, '')}`, target: '_blank', rel: 'noopener', dir: 'ltr' }, r.phone));
+  if (r.phone) meta.appendChild(el('a', { href: `tel:${r.phone}`, dir: 'ltr' }, r.phone));
   if (r.email) meta.appendChild(el('a', { href: `mailto:${r.email}`, dir: 'ltr' }, r.email));
   meta.appendChild(el('span', { class: 'muted', dir: 'ltr' }, r.page));
   a.appendChild(meta);

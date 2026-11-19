@@ -14,8 +14,6 @@ import { mailRequest } from './mail';
 const STATUSES = ['new', 'contacted', 'closed'];
 const NOT_APPLIED = 'جدول الطلبات ما انضاف بعد: شغّل npx wrangler d1 migrations apply apipeline-site --remote';
 const OFF = 'قاعدة الطلبات غير مربوطة';
-const PAUSED = 'الإرسال متوقف مؤقتًا، حاول بعد قليل';
-const FAILED = 'تعذّر إرسال طلبك الآن، حاول بعد قليل';
 
 async function notify(hook: string | undefined, r: SiteRequest, origin: string) {
   if (!hook || !/^https:\/\//.test(hook)) return;
@@ -27,7 +25,6 @@ async function notify(hook: string | undefined, r: SiteRequest, origin: string) 
 // The request is emailed to the owner and kept in D1 (the inbox). It counts as sent when either one worked.
 export async function submitRequest(req: Request, e: SiteEnv): Promise<Response> {
   const db = e.DB;
-  if ((!db || !e.IP_SALT) && !e.REQUESTS_EMAIL_TO) return json(503, { error: PAUSED });
   if (!sameOrigin(req)) return json(403, { error: 'طلب مرفوض' });
   let body: Record<string, unknown>;
   try { body = await readJson(req, 6000); } catch { return json(400, { error: 'الطلب غير صالح' }); }
@@ -46,12 +43,13 @@ export async function submitRequest(req: Request, e: SiteEnv): Promise<Response>
     }
   }
   const origin = new URL(req.url).origin;
-  const mailed = await mailRequest(e, c.data, origin);
-  if (!stored && !mailed) return json(503, { error: FAILED });
+  // Resend (server side) when its key is set; otherwise the page sends the email itself through FormSubmit, which
+  // only accepts browser submissions (it answers Workers with a challenge)
+  const mailed = e.RESEND_API_KEY ? await mailRequest(e, c.data, origin) : false;
   // What was asked, never who asked: the log is not a place for phone numbers
   console.log(JSON.stringify({ event: 'site_request', kind: c.data.kind, page: c.data.page, scope: c.data.scope.length, stored, mailed }));
   await notify(e.REQUESTS_WEBHOOK, c.data, origin);
-  return json(200, { ok: true });
+  return json(200, { ok: true, stored, mailed });
 }
 
 export async function listRequests(req: Request, e: SiteEnv): Promise<Response> {

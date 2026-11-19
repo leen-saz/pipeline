@@ -7,12 +7,13 @@ import { cleanRequest, phone, ipKey, LIMIT_PER_HOUR } from '../src/lib/site-requ
 import { submitRequest, listRequests, updateRequest, deleteRequest } from '../src/lib/requests-api';
 import { inboxAllowed, safeEqual, type SiteEnv } from '../src/lib/http';
 import MIGRATION from '../migrations/0001_site_requests.sql?raw';
+import MIGRATION_2 from '../migrations/0002_phone_optional.sql?raw';
 
 // node:sqlite behind the few D1 calls the store makes (prepare → bind → first / all / run)
 const { DatabaseSync } = await import('node:sqlite' as string);
 function d1(migrate = true): { db: D1Database; sql: { prepare(q: string): { all(...a: unknown[]): Record<string, unknown>[] } } } {
   const sql = new DatabaseSync(':memory:');
-  if (migrate) sql.exec(MIGRATION);
+  if (migrate) { sql.exec(MIGRATION); sql.exec(MIGRATION_2); }
   const prepare = (q: string) => {
     let args: unknown[] = [];
     const st = {
@@ -30,7 +31,7 @@ let SQL: ReturnType<typeof d1>['sql'];
 beforeEach(() => { const x = d1(); SQL = x.sql; E = { DB: x.db, IP_SALT: 'salt', INBOX_PASSWORD: 'open-sesame' }; });
 const rows = () => SQL.prepare('select * from site_requests order by id').all();
 const SITE = 'https://apipeline.example';
-const good = { kind: 'security', name: 'سارة', company: 'شركة تجربة', phone: '٠٥٠١٢٣٤٥٦٧', email: 'Test@Example.com', scope: ['web', 'nope', 'web'], message: 'نبي فحص', consent: true, page: '/security/', lang: 'ar', t: 9000 };
+const good = { kind: 'security', name: 'سارة', company: 'شركة تجربة', email: 'Test@Example.com', scope: ['web', 'nope', 'web'], message: 'نبي فحص', consent: true, page: '/security/', lang: 'ar', t: 9000 };
 
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
@@ -41,7 +42,7 @@ describe('request fields', () => {
     for (const v of ['0401234567', '05012345', 'abc', '', '+966401234567']) expect(phone(v)).toBeNull();
   });
   it('a good request is cleaned: email lowercased, scope deduped and limited to known values', () => {
-    expect(cleanRequest(good)).toEqual({ ok: true, data: { kind: 'security', name: 'سارة', company: 'شركة تجربة', phone: '+966501234567', email: 'test@example.com', scope: ['web'], message: 'نبي فحص', page: '/security/', lang: 'ar' } });
+    expect(cleanRequest(good)).toEqual({ ok: true, data: { kind: 'security', name: 'سارة', company: 'شركة تجربة', phone: null, email: 'test@example.com', scope: ['web'], message: 'نبي فحص', page: '/security/', lang: 'ar' } });
   });
   it('the home page is "/", and unknown kinds and pages fall back', () => {
     expect(cleanRequest({ ...good, page: '/' })).toMatchObject({ ok: true, data: { page: '/' } });
@@ -79,7 +80,7 @@ describe('POST /api/request', () => {
     const log = quiet();
     expect((await send(good)).status).toBe(200);
     const [row] = rows();
-    expect(row).toMatchObject({ kind: 'security', phone: '+966501234567', scope: '["web"]', status: 'new', page: '/security/' });
+    expect(row).toMatchObject({ kind: 'security', phone: null, email: 'test@example.com', scope: '["web"]', status: 'new', page: '/security/' });
     expect(String(row!.consent_at)).toMatch(/^\d{4}-\d\d-\d\dT/);
     expect(String(row!.at)).toMatch(/^\d{4}-\d\d-\d\dT.*Z$/);
     expect(row!.ip_key).toMatch(/^[0-9a-f]{32}$/);
@@ -90,11 +91,12 @@ describe('POST /api/request', () => {
     expect((await send(good, { origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' })).status).toBe(403);
     expect(rows()).toEqual([]);
   });
-  it('without the database, the salt or an email address, it says so', async () => {
+  it('without the database or the salt, the fields are still accepted and the page is told nothing was kept or mailed', async () => {
+    quiet();
     for (const env of [{}, { DB: E.DB }]) {
       const r = await send(good, {}, env);
-      expect(r.status).toBe(503);
-      expect((await r.json() as { error: string }).error).toContain('حاول بعد قليل');
+      expect(r.status).toBe(200);
+      expect(await r.json()).toEqual({ ok: true, stored: false, mailed: false });
     }
   });
   it('a bot gets OK and nothing is stored', async () => {
@@ -102,9 +104,9 @@ describe('POST /api/request', () => {
     expect(rows()).toEqual([]);
   });
   it('field errors come back per field, nothing stored', async () => {
-    const r = await send({ ...good, phone: '12', consent: false });
+    const r = await send({ ...good, email: 'nope', consent: false });
     expect(r.status).toBe(400);
-    expect(Object.keys((await r.json() as { fields: object }).fields).sort()).toEqual(['consent', 'phone']);
+    expect(Object.keys((await r.json() as { fields: object }).fields).sort()).toEqual(['consent', 'email']);
     expect(rows()).toEqual([]);
   });
   it('a body that is too big or not JSON is refused', async () => {
@@ -125,11 +127,11 @@ describe('POST /api/request', () => {
     expect(bad('lang=fr')).toThrow();
     expect(bad('scope=not json')).toThrow();
   });
-  it('before the migration and with no email, a submit says it could not send', async () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+  it('before the migration, nothing is kept and the page is told so (it then mails from the browser)', async () => {
+    quiet(); vi.spyOn(console, 'error').mockImplementation(() => {});
     const r = await send(good, {}, { ...E, DB: d1(false).db });
-    expect(r.status).toBe(503);
-    expect((await r.json() as { error: string }).error).toContain('حاول بعد قليل');
+    expect(r.status).toBe(200);
+    expect(await r.json()).toEqual({ ok: true, stored: false, mailed: false });
   });
   it('the webhook note says what was asked and where to read it, without phone or email', async () => {
     quiet();
@@ -206,31 +208,27 @@ describe('emailing a request', () => {
     vi.stubGlobal('fetch', async (u: string, init: RequestInit) => { seen.push({ url: String(u), init }); return new Response('{}', { status: 200 }); });
     return seen;
   };
-  it('goes to the owner through FormSubmit with every field, and is stored too', async () => {
+  it('without a Resend key the server sends nothing (FormSubmit refuses Workers; the page mails), and keeps a copy', async () => {
     quiet(); const seen = capture();
-    expect((await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to })).status).toBe(200);
-    const m = seen.find(s => s.url.startsWith('https://formsubmit.co/ajax/'))!;
-    expect(m.url).toBe(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`);
-    const b = JSON.parse(String(m.init.body));
-    expect(b['الجوال']).toBe('+966501234567');
-    expect(b['الاسم']).toBe('سارة');
-    expect(b._replyto).toBe('test@example.com');
+    const r = await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to });
+    expect(await r.json()).toEqual({ ok: true, stored: true, mailed: false });
+    expect(seen.filter(s => s.url.startsWith('https://formsubmit.co'))).toEqual([]);
     expect(rows()).toHaveLength(1);
   });
-  it('uses Resend when a key and sender are set', async () => {
+  it('uses Resend when a key and sender are set, and says it mailed', async () => {
     quiet(); const seen = capture();
-    await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to, RESEND_API_KEY: 'k', MAIL_FROM: 'site@example.test' });
+    const r = await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to, RESEND_API_KEY: 'k', MAIL_FROM: 'site@example.test' });
     const m = seen.find(s => s.url === 'https://api.resend.com/emails')!;
-    expect(JSON.parse(String(m.init.body)).to).toEqual([to]);
+    const b = JSON.parse(String(m.init.body));
+    expect(b.to).toEqual([to]);
+    expect(b.reply_to).toBe('test@example.com');
+    expect(b.text).toContain('test@example.com');
+    expect((await r.json() as { mailed: boolean }).mailed).toBe(true);
   });
-  it('with no database, an email alone is enough', async () => {
-    quiet(); capture();
-    expect((await send(good, {}, { REQUESTS_EMAIL_TO: to })).status).toBe(200);
-  });
-  it('when the mail is refused and nothing was stored, the visitor is told', async () => {
+  it('when Resend refuses, the page is told it still has to mail', async () => {
     quiet(); vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.stubGlobal('fetch', async () => new Response('', { status: 500 }));
-    const r = await send(good, {}, { REQUESTS_EMAIL_TO: to });
-    expect(r.status).toBe(503);
+    const r = await send(good, {}, { REQUESTS_EMAIL_TO: to, RESEND_API_KEY: 'k', MAIL_FROM: 'site@example.test' });
+    expect(await r.json()).toEqual({ ok: true, stored: false, mailed: false });
   });
 });

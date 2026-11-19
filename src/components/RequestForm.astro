@@ -23,7 +23,7 @@ const SCOPES = [['code', 'الكود'], ['web', 'الموقع والـ API'], ['
       {CONTACT.whatsapp && <p class="st-note">تفضّل الواتساب؟ <a href={wa('السلام عليكم، أبي أعرف أكثر عن Apipeline')} rel="noopener" target="_blank">راسلنا مباشرة</a></p>}
     </div>
 
-    <form class="st-tile st-form" data-request-form novalidate data-reveal>
+    <form class="st-tile st-form" data-request-form novalidate data-reveal data-mail-to={CONTACT.requestsEmail}>
       <div class="st-fields">
         <div class="fld">
           <label for="rq-kind">ما الذي تحتاجه؟</label>
@@ -47,13 +47,8 @@ const SCOPES = [['code', 'الكود'], ['web', 'الموقع والـ API'], ['
           <input id="rq-company" name="company" type="text" autocomplete="organization" maxlength="120">
         </div>
         <div class="fld">
-          <label for="rq-phone">رقم الجوال</label>
-          <input id="rq-phone" name="phone" class="field" type="tel" inputmode="tel" autocomplete="tel" placeholder="05XXXXXXXX" dir="ltr" maxlength="20" required>
-          <small class="st-err" data-err="phone"></small>
-        </div>
-        <div class="fld">
-          <label for="rq-email">الإيميل <span class="muted">(اختياري)</span></label>
-          <input id="rq-email" name="email" type="email" autocomplete="email" dir="ltr" maxlength="254">
+          <label for="rq-email">الإيميل</label>
+          <input id="rq-email" name="email" type="email" autocomplete="email" dir="ltr" maxlength="254" required>
           <small class="st-err" data-err="email"></small>
         </div>
         <div class="fld st-wide">
@@ -71,7 +66,7 @@ const SCOPES = [['code', 'الكود'], ['web', 'الموقع والـ API'], ['
       </div>
       <div class="st-done" data-done hidden>
         <b>استلمنا طلبك ✓</b>
-        <p>سنتواصل معك على رقمك خلال يوم عمل.</p>
+        <p>سنرد عليك على إيميلك خلال يوم عمل.</p>
       </div>
     </form>
   </div>
