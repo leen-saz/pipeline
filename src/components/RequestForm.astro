@@ -23,7 +23,7 @@ const SCOPES = [['code', 'الكود'], ['web', 'الموقع والـ API'], ['
       {CONTACT.whatsapp && <p class="st-note">تفضّل الواتساب؟ <a href={wa('السلام عليكم، أبي أعرف أكثر عن Apipeline')} rel="noopener" target="_blank">راسلنا مباشرة</a></p>}
     </div>
 
-    <form class="st-tile st-form" data-request-form novalidate data-reveal>
+    <form class="st-tile st-form" data-request-form novalidate data-reveal data-mail-to={CONTACT.requestsEmail}>
       <div class="st-fields">
         <div class="fld">
           <label for="rq-kind">ما الذي تحتاجه؟</label>

@@ -5,6 +5,8 @@ export const CONTACT = {
   // (emailed to the owner, src/lib/mail.ts) is the only way in.
   whatsapp: '',
   phoneLabel: '',
+  // Where the request form emails each request (through FormSubmit, from the visitor's browser)
+  requestsEmail: 'leen@brandsforhome.sa',
 };
 
 export const wa = (text: string) => CONTACT.whatsapp ? `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}` : '#contact';
