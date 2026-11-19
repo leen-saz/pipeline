@@ -1,0 +1,115 @@
+/* Page system after Zernio's public site (layout and type only; Apipeline's own colours and fonts stay as they are):
+   a thin announcement bar, a sticky header with section links, a 1080px content column framed by thin grid lines,
+   small accent eyebrows over lighter section headings, column features split by lines, a framed logo grid, an accordion
+   FAQ in a bordered box, and a large footer with link columns and the wordmark in outline.
+   Loaded after site.css. The header, announcement and footer rules apply on every page; the rest only under .st-z
+   (the landing and the profile). Every colour comes from the page's own tokens (--ink, --bg, --line, --accent). */
+
+/* ---- announcement bar (src/components/SiteHeader.astro, ANNOUNCEMENT in src/lib/public-site.ts) */
+.z-announce{margin:0;background:var(--ink);color:var(--bg);text-align:center;font:500 13px/1.4 var(--f-ar);position:relative;z-index:21}
+.z-announce a{display:block;padding:11px var(--gut);color:inherit;text-decoration:none}
+.z-announce a:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---- header: wordmark, links beside it, then language and the action at the far end */
+.st-top .st-wrap{gap:12px}
+.st-top nav.z-nav{margin-inline-start:20px;gap:2px}
+.st-top nav.z-nav a{padding:8px 10px;border-radius:8px;box-shadow:none}
+.st-top nav.z-nav a:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.st-top nav.z-nav a[aria-current]{color:var(--text);background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.st-top #lang{margin-inline-start:auto}
+.st-top .btn{border-radius:10px}
+.z-menu{display:none;position:relative}
+.z-menu summary{list-style:none;cursor:pointer;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--line)}
+.z-menu summary::-webkit-details-marker{display:none}
+.z-menu summary span,.z-menu summary span::before,.z-menu summary span::after{display:block;width:16px;height:1.5px;background:var(--ink);border-radius:2px;position:relative}
+.z-menu summary span::before,.z-menu summary span::after{content:"";position:absolute;inset-inline:0}
+.z-menu summary span::before{top:-5px}.z-menu summary span::after{top:5px}
+.z-menu[open] summary span{background:transparent}
+.z-menu[open] summary span::before{top:0;rotate:45deg}.z-menu[open] summary span::after{top:0;rotate:-45deg}
+.z-menu nav{position:absolute;inset-inline-end:0;top:calc(100% + 10px);min-width:220px;display:grid;padding:8px;border-radius:12px;
+  background:var(--bg);box-shadow:0 0 0 1px var(--line),0 24px 48px -16px rgba(0,0,0,.25);font:500 15px/1 var(--f-ar)}
+.z-menu nav a{padding:12px;border-radius:8px;text-decoration:none;color:var(--text)}
+.z-menu nav a:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+@media (max-width:1060px){
+  .st-top nav.z-nav{display:none}
+  .z-menu{display:block}
+}
+@media (max-width:520px){ .st-top .btn.sm{display:none} }
+
+/* ---- large footer */
+.st-foot.z-foot{padding:64px 0 0;overflow:hidden;border-top:1px solid var(--line)}
+.z-foot .st-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);gap:40px 48px;align-items:start}
+.z-foot-brand p{max-width:22em}
+.z-foot-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:32px 24px}
+.z-foot-cols nav{display:block}
+.z-foot-h{margin:0 0 14px!important;font:600 14px/1.4 var(--f-ar);color:var(--text)}
+.z-foot-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font:400 14px/1.5 var(--f-ar)}
+.z-foot-cols a,.z-foot-cols span{color:var(--muted)}
+.z-foot-cols a:hover{color:var(--text)}
+.z-foot-bottom{grid-column:1/-1;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 0;border-top:1px solid var(--line)}
+.z-foot-bottom small{grid-column:auto;border:0;padding:0;margin:0}
+.z-foot-word{margin:0 0 -.18em;text-align:center;font:400 clamp(72px,19vw,270px)/1 "Playfair Display",var(--f-display),serif;letter-spacing:-.03em;
+  color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--ink) 16%,transparent);user-select:none;white-space:nowrap}
+@media (max-width:760px){ .z-foot .st-wrap{grid-template-columns:1fr} .z-foot-cols{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+/* ================================================================ landing and profile (.st-z) */
+.st-z{--wrap:1080px;--gut:clamp(24px,4vw,40px);--z-frame:min(1080px,calc(100% - 24px))}
+
+/* the framed column: every section after the hero sits between two thin lines, with a line on top */
+.st-z main > section:not(.orb-hero){position:relative;isolation:isolate}
+.st-z main > section:not(.orb-hero)::after{content:"";position:absolute;inset-block:0;left:50%;translate:-50% 0;width:var(--z-frame);
+  border-inline:1px solid var(--line);border-top:1px solid var(--line);pointer-events:none;z-index:-1}
+.st-z main > .orb-hero + section::after{border-radius:16px 16px 0 0}
+
+/* flat page colour (the hero keeps its orb); dark sections stay dark */
+.st-z .st-sec:not(.st-dark),.st-z .st-sec:not(.st-dark):nth-of-type(even){background:none}
+.st-z .st-sec{padding:96px 0}
+.st-z .st-words-sec{padding:112px 0}
+
+/* type: small accent eyebrow, a lighter heading, a short line under it */
+.st-z .st-h1{font-size:clamp(40px,5.6vw,72px);line-height:1.12;letter-spacing:-.025em;margin-bottom:20px}
+.st-z .st-lead{font-size:17px;line-height:1.8;max-width:34em}
+.st-z .st-eyebrow{height:32px;border-radius:8px;background:color-mix(in srgb,var(--accent) 10%,transparent);box-shadow:none;color:var(--accent);font:500 14px/1 var(--f-ar)}
+.st-z .st-head{max-width:44em;margin-bottom:48px}
+.st-z .st-head .kick{font:500 14px/1.4 var(--f-ar);margin-bottom:10px}
+.st-z .st-head h2,.st-z .pc h2,.st-z .pc h3{font-size:clamp(28px,3.2vw,40px);line-height:1.25;letter-spacing:-.02em;margin-bottom:12px}
+.st-z .st-head p{font-size:16px;line-height:1.8;max-width:40em}
+.st-z .st-words{font-size:clamp(26px,3.6vw,44px);line-height:1.45}
+
+/* buttons: squarer, a little smaller */
+.st-z .btn{border-radius:10px}
+.st-z .st-cta .btn{--h:46px;padding:0 22px;font-size:15px}
+
+/* logos: a framed grid of the platforms instead of the moving strip */
+.st-z .st-logos{padding:40px 0 0;border:0}
+.st-z .st-logos .st-marquee{display:none}
+.z-logos{display:none}
+.st-z .z-logos{display:grid;grid-template-columns:repeat(5,1fr);list-style:none;margin:0 auto;padding:0;width:var(--z-frame)}
+.st-z .z-logos li{height:96px;display:grid;place-items:center;border-top:1px solid var(--line)}
+.st-z .z-logos li:not(:nth-child(5n+1)){border-inline-start:1px solid var(--line)}
+.z-logo{width:30px;height:30px;background:var(--ink);opacity:.55;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat;transition:opacity var(--ease)}
+.st-z .z-logos li:hover .z-logo{opacity:1}
+@media (max-width:640px){ .st-z .z-logos li{height:68px} .z-logo{width:22px;height:22px} }
+
+/* feature columns: no cards, columns split by thin lines, the first one marked */
+.st-z .st-grid{gap:0;border-top:1px solid var(--line)}
+.st-z .st-grid > .st-tile,.st-z .st-dark .st-grid > .st-tile{background:none;box-shadow:none;border:0;border-radius:0;padding:28px 24px 32px}
+.st-z .st-grid > .st-tile + .st-tile{border-inline-start:1px solid var(--line)}
+.st-z .st-grid > .st-tile:first-child{border-inline-start:2px solid var(--accent)}
+.st-z .st-tile h3{font-size:18px}
+.st-z .st-tile .ic{width:40px;height:40px;border-radius:10px}
+@media (max-width:900px){
+  .st-z .st-grid > .st-tile{border-inline-start:0!important}
+  .st-z .st-grid > .st-tile + .st-tile{border-top:1px solid var(--line)}
+}
+
+/* FAQ: the questions in one bordered box, rows split by lines, a plus that turns */
+.st-z .st-faq{max-width:none;display:block;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:color-mix(in srgb,#FFFFFF 40%,transparent)}
+.st-z .st-faq details,.st-z .st-faq details[open]{padding:0;margin:0;border-radius:0;background:none;box-shadow:none;border:0;border-bottom:1px solid var(--line)}
+.st-z .st-faq details:last-child{border-bottom:0}
+.st-z .st-faq details[open]{background:color-mix(in srgb,#FFFFFF 45%,transparent)}
+.st-z .st-faq summary{padding:18px 20px;font:500 16px/1.6 var(--f-ar);align-items:center;border-radius:0}
+.st-z .st-faq summary:hover{background:color-mix(in srgb,var(--ink) 3%,transparent)}
+.st-z .st-faq summary::after{width:22px;height:22px;background-color:transparent;box-shadow:none}
+.st-z .st-faq p{margin:0;padding:0 20px 20px;font-size:15px}
+.st-z .st-tile > .st-chip{align-self:flex-start}

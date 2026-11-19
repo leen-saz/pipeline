@@ -656,4 +656,16 @@ export const SITE_EN = {
   "اقتراح · TikTok": "Suggestion · TikTok",
   "اكتب إيميلًا صحيحًا": "Enter a valid email",
   "سنرد عليك على إيميلك خلال يوم عمل.": "We'll reply to your email within a working day.",
+  // Header links, announcement and footer columns (src/lib/public-site.ts)
+  "العرض": "Demo",
+  "طريقة العمل": "How it works",
+  "الوكلاء": "Agents",
+  "الأمان": "Safety",
+  "الأسئلة": "FAQ",
+  "المنتج": "Product",
+  "العرض التجريبي": "Live demo",
+  "الفحص": "Audits",
+  "القائمة": "Menu",
+  "الربط": "Connections",
+  "جديد: جرّب اللوحة كاملة في متصفحك ببيانات افتراضية، دون تسجيل": "New: try the whole board in your browser with sample data, no sign-up",
 };
