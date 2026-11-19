@@ -5,11 +5,10 @@
 | الصفحة | الرابط | الملف |
 |---|---|---|
 | الرئيسية (لوحة القرارات) | `/` | `src/components/LandingPage.astro` |
-| الأمن السيبراني (موقع مستقل) | https://apipeline-security.leen-b9b.workers.dev | `src/components/SecurityPage.astro` (`npm run build:security` ثم `wrangler deploy --env security`. البيئة تنحدد وقت البناء، فلازم كل موقع ينبني بأمره قبل نشره) |
 | بروفايل الشركة (يطبع PDF) | `/profile/` | `src/pages/profile/index.astro` |
 | صندوق الطلبات (بكلمة سر) | `/inbox/` | `src/pages/inbox/index.astro` |
 
-- **التقنية:** Astro 7 على Cloudflare Workers. الصفحات الثلاث تُبنى مسبقًا (static)، والـ Worker يشغّل بس `/api/*` و`/inbox/`.
+- **التقنية:** Astro 7 على Cloudflare Workers. الصفحتان تُبنى مسبقًا (static)، والـ Worker يشغّل بس `/api/*` و`/inbox/`.
 - **الهوية:** كحلي وبيبي بلو على كل الصفحات (`.st-night` في `public/assets/site.css`). خلفية كل الأقسام `#040C20`، والكروت زجاج بحافة مضيئة، وهو نفس لون أطراف الفيديو، عشان الفيديو يذوب في الصفحة.
 - **فيديو الهيرو:** شريط ضوء أزرق يتموّج ويتنفّس على الكحلي، ٨ ثواني ويتكرر بدون قفزة (`public/assets/video/light-*.mp4`). يتبع السكرول على الكمبيوتر، ويشتغل لحاله على الجوال، ويرجع بعد الفوتر. ينولّد بـ `scripts/render-hero.py`، وتقدر تستبدله بفيديو Veo بنفس الاسم والمقاس. الطريقة كاملة في `.claude/skills/cinematic-web-builder`.
 - **الحركة مع السكرول:** GSAP ScrollTrigger في `src/lib/scroll-story.ts`. وإذا المتصفح طالب حركة أقل، تطلع الصفحة ثابتة.

@@ -7,8 +7,6 @@ import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import RequestForm from '../../components/RequestForm.astro';
 import OrbHero from '../../components/OrbHero.astro';
-import { SITE_MODE, MAIN_URL, SECURITY_URL } from '../../lib/public-site';
-if (SITE_MODE === 'security') return Astro.redirect(`${MAIN_URL}/profile/`, 301);
 
 
 const VALUES = [
@@ -21,7 +19,6 @@ const VALUES = [
 const LINES = [
   ['لوحة Apipeline', 'منصة', 'أرقام منصات الإعلان كلها في لوحة واحدة تتحدّث كل ساعة، وسبعة وكلاء وأكثر يقترحون القرار وينفّذونه بعد موافقتك.', ['مزامنة Meta وGoogle وSnapchat وTikTok وGA4', 'لوحة قرارات بموافقة وتعديل ورفض', 'مراجع يفحص كل اقتراح على قواعدك', 'سجل كامل لكل قرار'], '/'],
   ['خريطة التسرب', 'خدمة نمو', 'قبل زيادة الميزانية، نحدد أين يضيع العميل بين الإعلان والمبيعات، ونرتب الإصلاحات حسب أثرها.', ['مراجعة الإنفاق وجودة العملاء المحتملين', 'تحديد نقطة التسرب: إعلان، عرض، صفحة، أو متابعة', 'خطة ٩٠ يومًا بقرارات واضحة', 'ربط الحملات بالمبيعات'], ''],
-  ['الأمن السيبراني', 'خدمة فحص', 'فحص أمني للكود والمواقع والـ API وتطبيقات الجوال، مع تقرير مرتب حسب الخطورة وإعادة فحص بعد الإصلاح.', ['مراجعة الكود والمكتبات والأسرار', 'اختبار اختراق للويب والجوال', 'مراجعة إعدادات السحابة', 'ربط النتائج بضوابط ECC وPDPL'], SECURITY_URL],
 ];
 
 const HOW = [
@@ -33,7 +30,6 @@ const HOW = [
 
 const FIT = [
   'لديك إنفاق إعلاني قائم أو نية جادة للاستثمار فيه',
-  'لديك منتج رقمي، موقع أو تطبيق، وتريد معرفة وضعه الأمني',
   'مستعد لمشاركة البيانات والتعامل مع الأرقام بوضوح',
   'تبحث عن تحسين فعلي، لا تقرير نهاية الشهر',
 ];
@@ -103,7 +99,7 @@ const FIT = [
 
   <section class="st-words-sec">
     <div class="st-wrap">
-      <p class="st-words" data-words>Apipeline شركة تقنية سعودية. بدأنا من سؤال يتكرر في كل شركة: أين ذهبت الميزانية، وما خطوتنا القادمة؟ واليوم نبني الأدوات التي تجيب عنه، ونحمي المنتجات التي تعتمد عليها.</p>
+      <p class="st-words" data-words>Apipeline شركة تقنية سعودية. بدأنا من سؤال يتكرر في كل شركة: أين ذهبت الميزانية، وما خطوتنا القادمة؟ واليوم نبني الأدوات التي تجيب عنه.</p>
     </div>
   </section>
 
@@ -138,7 +134,7 @@ const FIT = [
     <div class="st-wrap">
       <header class="st-head" data-reveal>
         <span class="kick">ما نقدّمه</span>
-        <h2>ثلاثة مسارات، ومنهجية واحدة</h2>
+        <h2>مساران، ومنهجية واحدة</h2>
       </header>
       {LINES.map(([t, tag, d, list, href]) => (
         <article class="pf-line" data-reveal>

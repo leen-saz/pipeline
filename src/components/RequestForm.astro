@@ -1,13 +1,10 @@
 ---
 // The request form on the public pages. Posts to /api/request (src/pages/api/request.ts) via src/lib/request-form.ts;
 // without JS it does nothing harmful (no action, the WhatsApp link stays). One per page, anchored at #request.
-import { CONTACT, wa, SITE_MODE } from '../lib/public-site';
-interface Props { kind: 'board' | 'leakmap' | 'security'; title: string; lead: string }
+import { CONTACT, wa } from '../lib/public-site';
+interface Props { kind: 'board' | 'leakmap'; title: string; lead: string }
 const { kind, title, lead } = Astro.props;
-const KINDS = SITE_MODE === 'security'
-  ? [['security', 'فحص أمني'], ['other', 'استفسار آخر']]
-  : [['board', 'تجربة لوحة Apipeline'], ['leakmap', 'خريطة التسرب (تشخيص الإعلانات)'], ['other', 'استفسار آخر']];
-const SCOPES = [['code', 'الكود'], ['web', 'الموقع والـ API'], ['mobile', 'تطبيق الجوال'], ['cloud', 'السحابة والإعدادات']];
+const KINDS = [['board', 'تجربة لوحة Apipeline'], ['leakmap', 'خريطة التسرب (تشخيص الإعلانات)'], ['other', 'استفسار آخر']];
 ---
 <section class="st-sec st-req" id="request">
   <div class="st-wrap st-req-in">
@@ -31,12 +28,6 @@ const SCOPES = [['code', 'الكود'], ['web', 'الموقع والـ API'], ['
             {KINDS.map(([v, t]) => <option value={v} selected={v === kind}>{t}</option>)}
           </select>
         </div>
-        <fieldset class="fld st-scope" data-scope hidden={kind !== 'security'}>
-          <legend>ما الذي نفحصه؟</legend>
-          <div class="checks">
-            {SCOPES.map(([v, t]) => <label><input type="checkbox" name="scope" value={v}>{t}</label>)}
-          </div>
-        </fieldset>
         <div class="fld">
           <label for="rq-name">الاسم</label>
           <input id="rq-name" name="name" type="text" autocomplete="name" maxlength="80" required>

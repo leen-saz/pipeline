@@ -9,7 +9,6 @@
     "typecheck": "astro check && tsc --noEmit",
     "test": "vitest run",
     "deploy": "astro build && wrangler deploy",
-    "build:security": "PUBLIC_SITE_MODE=security CLOUDFLARE_ENV=security astro build",
     "build:production": "CLOUDFLARE_ENV=production astro build"
   },
   "dependencies": {

@@ -3,7 +3,7 @@
 // a bottom row, and the wordmark drawn in outline across the bottom edge.
 // The hero video plays again behind the closing line (cinematic-web-builder, phase 7): muted, no overlay, only a fade
 // at the top edge into the page colour; it waits off screen (preload="none") until the page reaches it.
-import { FOOTER, CONTACT, wa, SITE_MODE, MAIN_URL, SECURITY_URL } from '../lib/public-site';
+import { FOOTER, CONTACT, wa } from '../lib/public-site';
 interface Props { line?: string; video?: boolean; cta?: string }  // video={false}: no video, a warm colour field instead (the landing)
 const { line, video = true, cta } = Astro.props;
 ---
@@ -18,7 +18,7 @@ const { line, video = true, cta } = Astro.props;
     <div class="st-wrap">
       <div class="z-foot-brand">
         <span class="mark">Apipeline</span>
-        <p>{SITE_MODE === 'security' ? 'نفحص أمن الأكواد والمواقع والتطبيقات، ونسلّمك كل ثغرة بدليلها وطريقة إصلاحها.' : 'شركة تقنية سعودية تبني لوحة قرارات تسويقية يديرها وكلاء أذكياء.'}</p>
+        <p>شركة تقنية سعودية تبني لوحة قرارات تسويقية يديرها وكلاء أذكياء.</p>
         {CONTACT.whatsapp && <a class="st-wa" href={wa('السلام عليكم، أبي أعرف أكثر عن Apipeline')} rel="noopener" target="_blank"><span dir="ltr">{CONTACT.phoneLabel}</span> · واتساب</a>}
       </div>
       <div class="z-foot-cols">
@@ -31,7 +31,6 @@ const { line, video = true, cta } = Astro.props;
       </div>
       <div class="z-foot-bottom">
         <small><span dir="ltr">© 2026 Apipeline</span></small>
-        <small><a href={SITE_MODE === 'security' ? MAIN_URL : SECURITY_URL}>{SITE_MODE === 'security' ? 'لوحة Apipeline' : 'Apipeline Security'}</a></small>
       </div>
     </div>
     <p class="z-foot-word" aria-hidden="true" dir="ltr">Apipeline</p>
