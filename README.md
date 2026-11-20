@@ -38,18 +38,18 @@ npm run dev                      # يبني ثم يشغّل wrangler dev
 
 `npm test` للاختبارات، و`npm run typecheck` للأنواع.
 
-## النشر (مرة وحدة)
+## النشر
 
-1. **قاعدة الطلبات:** موجودة على كلاود فلير. أي تعديل على الجدول يكون بملف جديد في `migrations/`، وبعدها:
-   ```bash
-   npx wrangler d1 migrations apply apipeline-site --remote
-   ```
-2. **أسرار الـ Worker:**
-   ```bash
-   npx wrangler secret put INBOX_PASSWORD --env production
-   npx wrangler secret put IP_SALT --env production
-   # اختياري: إشعار بكل طلب جديد (Slack/Teams/أي رابط https)
-   npx wrangler secret put REQUESTS_WEBHOOK --env production
-   ```
-3. **أسرار GitHub:** حط `CLOUDFLARE_API_TOKEN` و`CLOUDFLARE_ACCOUNT_ID` في أسرار الريبو. بعدها شغّل workflow **Deploy** يدويًا من تبويب Actions، أو شغّل `npm run deploy -- --env production` من جهازك.
-4. **الدومين:** اربطه من Cloudflare على الـ Worker `pipeline`.
+النشر من هذا الريبو فقط، وما له علاقة بأي ريبو ثاني (ولا Well Ads).
+
+- **التشغيل:** تبويب Actions ← **Deploy** ← Run workflow. يشغّل الاختبارات، ويبني الموقع، ويطبّق تعديلات قاعدة D1 الجديدة (`migrations/`)، وبعدها ينشر الـ Worker على https://pipeline.leen-b9b.workers.dev
+- **أسرار GitHub (موجودة):** `CLOUDFLARE_API_TOKEN` (مفتاح خاص بالموقع بصلاحية Workers وD1) و`CLOUDFLARE_ACCOUNT_ID`.
+- **أسرار الـ Worker (مرة وحدة):**
+  ```bash
+  npx wrangler secret put INBOX_PASSWORD --env production
+  npx wrangler secret put IP_SALT --env production
+  # اختياري: إشعار بكل طلب جديد (Slack/Teams/أي رابط https)
+  npx wrangler secret put REQUESTS_WEBHOOK --env production
+  ```
+- **تعديل الجدول:** أي تعديل يكون بملف جديد في `migrations/`، وينطبق تلقائيًا في النشر التالي.
+- **الدومين:** يرتبط من Cloudflare على الـ Worker `pipeline`.
