@@ -24,6 +24,20 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # The Worker's own secrets, copied from the repo's GitHub secrets when set there (skipped when empty; never printed)
+      - name: Worker secrets
+        run: |
+          for name in RESEND_API_KEY IP_SALT INBOX_PASSWORD REQUESTS_WEBHOOK; do
+            value="${!name}"
+            if [ -n "$value" ]; then printf '%s' "$value" | npx wrangler secret put "$name" --env production >/dev/null && echo "set $name"; else echo "skip $name"; fi
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          IP_SALT: ${{ secrets.IP_SALT }}
+          INBOX_PASSWORD: ${{ secrets.INBOX_PASSWORD }}
+          REQUESTS_WEBHOOK: ${{ secrets.REQUESTS_WEBHOOK }}
       - run: npx wrangler deploy --env production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

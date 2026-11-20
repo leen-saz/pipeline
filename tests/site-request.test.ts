@@ -229,6 +229,13 @@ describe('emailing a request', () => {
     expect(b.text).toContain('test@example.com');
     expect((await r.json() as { mailed: boolean }).mailed).toBe(true);
   });
+  it('with only a Resend key, it mails from the Resend test sender (no domain needed)', async () => {
+    quiet(); const seen = capture();
+    const r = await send(good, {}, { ...E, REQUESTS_EMAIL_TO: to, RESEND_API_KEY: 'k' });
+    const b = JSON.parse(String(seen.find(s => s.url === 'https://api.resend.com/emails')!.init.body));
+    expect(b.from).toBe('Apipeline <onboarding@resend.dev>');
+    expect((await r.json() as { mailed: boolean }).mailed).toBe(true);
+  });
   it('when Resend refuses, the page is told it still has to mail', async () => {
     quiet(); vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.stubGlobal('fetch', async () => new Response('', { status: 500 }));
