@@ -1,8 +1,12 @@
 // Emails each site request to the owner. The address is REQUESTS_EMAIL_TO (a Worker var or secret).
-// With RESEND_API_KEY + MAIL_FROM it goes through Resend; otherwise through FormSubmit's AJAX endpoint, which needs no
+// With RESEND_API_KEY it goes through Resend from the server (MAIL_FROM, or Resend's own test sender, which can mail the
+// Resend account's own address with no domain to verify); otherwise through FormSubmit's AJAX endpoint, which needs no
 // key: the first message asks the owner to click «Activate» once, and every message after that is delivered.
 // Returns true only when the provider accepted the message. Never logs the visitor's details.
 import { KIND_AR, type SiteRequest } from './site-request';
+
+// Resend's shared sender: works before any domain is verified, but only to the address the Resend account was opened with
+export const RESEND_TEST_FROM = 'Apipeline <onboarding@resend.dev>';
 
 export interface MailEnv { REQUESTS_EMAIL_TO?: string; RESEND_API_KEY?: string; MAIL_FROM?: string }
 
@@ -22,7 +26,7 @@ export async function mailRequest(e: MailEnv, r: SiteRequest, origin: string, f:
   const lines = requestLines(r);
   const text = lines.map(([k, v]) => `${k}: ${v}`).join('\n') + `\n\nكل الطلبات: ${origin}/inbox/`;
   try {
-    const key = (e.RESEND_API_KEY || '').trim(), from = (e.MAIL_FROM || '').trim();
+    const key = (e.RESEND_API_KEY || '').trim(), from = (e.MAIL_FROM || '').trim() || RESEND_TEST_FROM;
     const res = key && from
       ? await f('https://api.resend.com/emails', {
           method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
